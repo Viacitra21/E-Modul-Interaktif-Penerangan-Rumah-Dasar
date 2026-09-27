@@ -221,25 +221,23 @@ initTabs('.tabs');
 // di lab, ganti saja <svg> pada comp-card & modal dengan <img src="assets/img/...">.
 const komponen = [
   {id:'lampu', nama:'Lampu', fungsi:'Mengubah energi listrik menjadi cahaya.', pasang:'Dipasang pada fitting, dihubungkan ke jalur keluaran saklar dan netral.', aman:'Pastikan daya lampu sesuai kapasitas fitting dan MCB.',
-   icon:'<path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.6 10.8c.6.45 1.1 1.2 1.1 2.2h5c0-1 .5-1.75 1.1-2.2A6 6 0 0012 3z" stroke="#D9678F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'},
+   icon:'<img src="assets\img\lampu.jpg" alt="Lampu">'},
   {id:'fitting', nama:'Fitting', fungsi:'Dudukan tempat lampu dipasang dan disambungkan ke instalasi.', pasang:'Dipasang pada plafon/dinding, kabel fasa dan netral disambung ke terminalnya.', aman:'Pastikan tidak ada bagian logam yang terbuka.',
-   icon:'<circle cx="12" cy="12" r="7" stroke="#2E2A5E" stroke-width="1.6"/><circle cx="12" cy="12" r="2" fill="#2E2A5E"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2" stroke="#2E2A5E" stroke-width="1.4" stroke-linecap="round"/>'},
+   icon:'<img src="assets\img\fitting.jpg" alt="Fitting">'},
   {id:'kwh', nama:'kWh Meter', fungsi:'Alat pengukur pemakaian daya listrik 1 fasa.', pasang:'Dipasang di awal instalasi, sebelum MCB utama.', aman:'Jangan membuka segel meter tanpa izin petugas.',
-   icon:'<rect x="4" y="6" width="16" height="13" rx="2" stroke="#159E93" stroke-width="1.6"/><path d="M8 15l3-5 2 3 3-4" stroke="#159E93" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'},
+   icon:'<img src="assets\img\kwh meter.jpg" alt="kWh Meter">'},
   {id:'saklar', nama:'Saklar', fungsi:'Memutus dan menghubungkan aliran listrik menuju lampu.', pasang:'Dipasang pada jalur fasa, sebelum menuju fitting lampu.', aman:'Pasang pada jalur fasa (L), bukan netral.',
-   icon:'<rect x="6" y="3" width="12" height="18" rx="6" stroke="#2E2A5E" stroke-width="1.6"/><circle cx="12" cy="9" r="3" fill="#F2A0C4"/>'},
-  {id:'stopkontak', nama:'Stop Kontak', fungsi:'Tempat menghubungkan peralatan listrik ke sumber daya melalui steker.', pasang:'Dihubungkan langsung ke jalur fasa dan netral dari sumber.', aman:'Jangan membebani satu stop kontak dengan daya berlebih.',
-   icon:'<rect x="4" y="5" width="16" height="14" rx="3" stroke="#D9678F" stroke-width="1.6"/><circle cx="9.5" cy="12" r="1.4" fill="#D9678F"/><circle cx="14.5" cy="12" r="1.4" fill="#D9678F"/>'},
+   icon:'<img src="assets\img\saklar.jpg" alt="Saklar">'},
   {id:'mcb', nama:'MCB', fungsi:'Pengaman otomatis yang memutus arus saat terjadi hubung singkat/beban lebih.', pasang:'Dipasang di awal rangkaian, setelah kWh meter.', aman:'Pilih rating arus MCB sesuai kebutuhan beban.',
-   icon:'<rect x="7" y="3" width="10" height="18" rx="2" stroke="#2E2A5E" stroke-width="1.6"/><line x1="12" y1="7" x2="12" y2="12" stroke="#2E2A5E" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="16" r="1.3" fill="#2E2A5E"/>'},
+   icon:'<img src="assets\img\MCB.jpg" alt="MCB">'},
   {id:'kabel', nama:'Kabel', fungsi:'Penghantar yang mengalirkan arus listrik antar komponen.', pasang:'Sambungkan sesuai warna dan fungsi jalur (fasa/netral/ground).', aman:'Gunakan kabel dengan ukuran sesuai kapasitas arus.',
-   icon:'<path d="M3 12c2-5 4 5 6 0s4 5 6 0s4 5 6 0" stroke="#E8A23D" stroke-width="1.7" fill="none" stroke-linecap="round"/>'},
+   icon:'<img src="assets\img\kabel.jpg" alt="Kabel">'},
   {id:'steker', nama:'Steker', fungsi:'Penghubung antara peralatan listrik dengan stop kontak.', pasang:'Dipasang pada ujung kabel peralatan listrik.', aman:'Pastikan isolasi steker tidak retak atau terbuka.',
-   icon:'<path d="M9 3v6M15 3v6" stroke="#159E93" stroke-width="1.7" stroke-linecap="round"/><path d="M7 9h10v3a5 5 0 01-10 0V9z" stroke="#159E93" stroke-width="1.6" fill="none"/><line x1="12" y1="17" x2="12" y2="21" stroke="#159E93" stroke-width="1.7" stroke-linecap="round"/>'},
+   icon:'<img src="assets\img\steker.jpg" alt="Steker">'},
   {id:'kotaksambung', nama:'Kotak Sambung', fungsi:'Tempat menyambung beberapa kabel dengan aman dan rapi.', pasang:'Dipasang di titik percabangan jalur instalasi.', aman:'Tutup rapat setelah penyambungan agar tidak terkena air/debu.',
-   icon:'<rect x="5" y="7" width="14" height="11" rx="2" stroke="#2E2A5E" stroke-width="1.6"/><line x1="5" y1="11.5" x2="19" y2="11.5" stroke="#2E2A5E" stroke-width="1.4"/>'},
+   icon:'<img src="assets\img\kotaksambung.jpe" alt="Kotak Sambung">'},
   {id:'terminal', nama:'Terminal', fungsi:'Menghubungkan beberapa penghantar tanpa harus dipilin langsung.', pasang:'Dipasang di dalam kotak sambung sebagai titik penghubung kabel.', aman:'Pastikan baut terminal terpasang kencang.',
-   icon:'<rect x="4" y="9" width="16" height="6" rx="1.5" stroke="#D9678F" stroke-width="1.6"/><line x1="8" y1="9" x2="8" y2="15" stroke="#D9678F" stroke-width="1.4"/><line x1="12" y1="9" x2="12" y2="15" stroke="#D9678F" stroke-width="1.4"/><line x1="16" y1="9" x2="16" y2="15" stroke="#D9678F" stroke-width="1.4"/>'}
+   icon:'<img src="assets\img\terminal.webp" alt="Terminal">'},
 ];
 
 const compGrid = document.getElementById('compGrid');
