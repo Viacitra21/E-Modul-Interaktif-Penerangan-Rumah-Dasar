@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluasi — E-Modul TITL</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar">
+    <a href="index.html" class="brand">
+      <svg class="bulb" viewBox="0 0 24 24" fill="none"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.6 10.8c.6.45 1.1 1.2 1.1 2.2h5c0-1 .5-1.75 1.1-2.2A6 6 0 0012 3z" stroke="#D9678F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      E-Modul TITL
+    </a>
+    <button class="nav-toggle" aria-label="Buka menu"></button>
+    <div class="nav-links">
+      <a href="index.html">Beranda</a>
+      <a href="materi.html">Materi</a>
+      <a href="jobsheet.html">Praktik</a>
+      <a href="latihan.html">Latihan</a>
+      <a href="evaluasi.html" class="active">Evaluasi</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head" id="introBox">
+        <span class="eyebrow-tag">Evaluasi Akhir</span>
+        <h2>Penerangan Rumah Dasar</h2>
+        <p>Evaluasi ini berbeda dari latihan — jawabanmu digunakan untuk mengukur pemahaman akhir pada empat indikator: komponen, simbol, rangkaian, dan keselamatan kerja.</p>
+        <button class="btn btn-primary" onclick="startEval()">Mulai Evaluasi (10 soal)</button>
+      </div>
+
+      <div id="evalArea" style="display:none;">
+        <div class="quiz-progress"><span id="eProgress">Soal 1 / 10</span><span id="eCatTag"></span></div>
+        <div class="quiz-card">
+          <div class="quiz-question" id="eQuestion"></div>
+          <div class="quiz-options" id="eOptions"></div>
+        </div>
+        <div class="btn-row" style="margin-top:18px;justify-content:flex-end;">
+          <button class="btn btn-primary" id="eNextBtn" disabled onclick="eNext()">Lanjut →</button>
+        </div>
+      </div>
+
+      <div id="resultArea" style="display:none;">
+        <div class="score-panel">
+          <div class="muted" style="color:rgba(255,255,255,.7);font-weight:600;">Hasil Evaluasi</div>
+          <div class="score-num" id="scoreNum">0</div>
+          <div id="indicatorList" class="indicator-list"></div>
+        </div>
+        <p class="center" id="verdictText" style="margin-top:22px;font-size:1.05rem;font-weight:600;"></p>
+        <div class="btn-row center" style="justify-content:center;">
+          <button class="btn btn-ghost" onclick="location.reload()">Ulangi Evaluasi</button>
+          <a href="materi.html" class="btn btn-primary">Pelajari Ulang Materi</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">E-Modul Interaktif TITL · Sumber Belajar Praktik Penerangan Rumah Dasar · SMKN 2 Pemangkat</div>
+</footer>
+
+<script>const PAGE_TAHAP = 'Evaluasi';</script>
+<script src="js/main.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/tracking.js"></script>
+<script>
+const evalQuestions = [
+  {cat:'Komponen', q:'Komponen yang berfungsi sebagai pengaman otomatis terhadap hubung singkat adalah...', options:['MCB','Fitting','Terminal','Steker'], correct:0},
+  {cat:'Komponen', q:'Dudukan tempat lampu dipasang disebut...', options:['Kotak sambung','Fitting','Stop kontak','kWh meter'], correct:1},
+  {cat:'Simbol', q:'Simbol lingkaran bersilang pada diagram instalasi melambangkan...', options:['Saklar','Stop kontak','Lampu','MCB'], correct:2},
+  {cat:'Simbol', q:'Simbol dua titik dengan garis miring di antaranya biasa digunakan untuk melambangkan...', options:['Saklar tunggal','Kabel netral','kWh meter','Terminal'], correct:0},
+  {cat:'Rangkaian', q:'Pada rangkaian lampu-saklar tunggal, saklar dipasang pada penghantar...', options:['Netral','Fasa (L)','Ground','Netral dan fasa sekaligus'], correct:1},
+  {cat:'Rangkaian', q:'Urutan aliran arus yang benar pada rangkaian dasar adalah...', options:['Lampu → Saklar → MCB → Sumber','Sumber → MCB → Saklar → Lampu','Sumber → Lampu → Saklar → MCB','MCB → Lampu → Saklar → Sumber'], correct:1},
+  {cat:'Rangkaian', q:'Jika saklar sudah ON namun lampu tetap mati, kemungkinan besar penyebabnya adalah...', options:['Warna kabel tertukar','Sambungan kabel terlepas atau lampu rusak','Stop kontak longgar','Kotak sambung terlalu penuh'], correct:1},
+  {cat:'Keselamatan', q:'Hal pertama yang harus dilakukan sebelum memasang instalasi adalah...', options:['Menyalakan MCB','Memastikan sumber listrik OFF','Memasang lampu terlebih dahulu','Mengukur tegangan stop kontak'], correct:1},
+  {cat:'Keselamatan', q:'Sebelum menyalakan sumber listrik setelah praktik, siswa sebaiknya...', options:['Langsung menyalakan MCB','Memeriksa seluruh sambungan terlebih dahulu','Mengabaikan kabel yang terkelupas','Membiarkan panel terbuka'], correct:1},
+  {cat:'Keselamatan', q:'Kabel yang terkelupas pada instalasi sebaiknya...', options:['Dibiarkan karena masih berfungsi','Ditutup ulang dengan isolasi atau diganti','Digunakan langsung tanpa perbaikan','Disambung dengan kabel lain tanpa isolasi'], correct:1}
+];
+
+let eIdx = 0;
+let eAnswers = [];
+
+function startEval() {
+  document.getElementById('introBox').style.display = 'none';
+  document.getElementById('evalArea').style.display = 'block';
+  renderEval();
+}
+
+function renderEval() {
+  const q = evalQuestions[eIdx];
+  document.getElementById('eProgress').textContent = `Soal ${eIdx+1} / ${evalQuestions.length}`;
+  document.getElementById('eCatTag').textContent = q.cat;
+  document.getElementById('eQuestion').textContent = q.q;
+  document.getElementById('eNextBtn').disabled = true;
+  document.getElementById('eNextBtn').textContent = eIdx === evalQuestions.length - 1 ? 'Lihat Hasil →' : 'Lanjut →';
+
+  const opts = document.getElementById('eOptions');
+  opts.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'quiz-opt';
+    b.textContent = opt;
+    b.addEventListener('click', () => {
+      [...opts.children].forEach(o => o.classList.remove('selected'));
+      b.style.borderColor = 'var(--indigo)';
+      [...opts.children].forEach(o => { if (o !== b) o.style.borderColor = 'transparent'; });
+      eAnswers[eIdx] = i;
+      document.getElementById('eNextBtn').disabled = false;
+    });
+    opts.appendChild(b);
+  });
+}
+
+function eNext() {
+  eIdx++;
+  if (eIdx >= evalQuestions.length) {
+    showResult();
+    return;
+  }
+  renderEval();
+}
+
+function showResult() {
+  document.getElementById('evalArea').style.display = 'none';
+  document.getElementById('resultArea').style.display = 'block';
+
+  const cats = {};
+  evalQuestions.forEach((q, i) => {
+    if (!cats[q.cat]) cats[q.cat] = {correct:0, total:0};
+    cats[q.cat].total++;
+    if (eAnswers[i] === q.correct) cats[q.cat].correct++;
+  });
+
+  const totalCorrect = Object.values(cats).reduce((s,c) => s + c.correct, 0);
+  const totalScore = Math.round((totalCorrect / evalQuestions.length) * 100);
+  document.getElementById('scoreNum').textContent = totalScore;
+
+  const list = document.getElementById('indicatorList');
+  list.innerHTML = '';
+  let lowest = {cat:'', pct:101};
+  Object.entries(cats).forEach(([cat, c]) => {
+    const pct = Math.round((c.correct / c.total) * 100);
+    if (pct < lowest.pct) lowest = {cat, pct};
+    const row = document.createElement('div');
+    row.className = 'indicator-row';
+    row.innerHTML = `<span>${cat}</span><div class="indicator-track"><div class="indicator-fill" style="width:${pct}%"></div></div><span>${pct}%</span>`;
+    list.appendChild(row);
+  });
+
+  const verdict = document.getElementById('verdictText');
+  if (totalScore >= 75) {
+    verdict.textContent = '✅ Kamu sudah memahami materi dasar penerangan rumah dengan baik.';
+    verdict.style.color = '#227A47';
+  } else {
+    verdict.textContent = `📘 Kamu perlu mempelajari kembali materi "${lowest.cat}" sebelum melanjutkan praktik.`;
+    verdict.style.color = '#8A5A11';
+  }
+
+  const detailPerIndikator = Object.entries(cats)
+    .map(([cat, c]) => `${cat}: ${Math.round((c.correct / c.total) * 100)}%`)
+    .join(', ');
+  logEvent('Selesai Evaluasi', detailPerIndikator, totalScore);
+}
+</script>
+</body>
+</html>

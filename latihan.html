@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latihan — E-Modul TITL</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar">
+    <a href="index.html" class="brand">
+      <svg class="bulb" viewBox="0 0 24 24" fill="none"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.6 10.8c.6.45 1.1 1.2 1.1 2.2h5c0-1 .5-1.75 1.1-2.2A6 6 0 0012 3z" stroke="#D9678F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      E-Modul TITL
+    </a>
+    <button class="nav-toggle" aria-label="Buka menu"></button>
+    <div class="nav-links">
+      <a href="index.html">Beranda</a>
+      <a href="materi.html">Materi</a>
+      <a href="jobsheet.html">Praktik</a>
+      <a href="latihan.html" class="active">Latihan</a>
+      <a href="evaluasi.html">Evaluasi</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow-tag">Latihan</span>
+        <h2>Uji pemahamanmu</h2>
+        <p>Latihan ini untuk belajar sambil mencoba — jawaban salah tidak masalah, yang penting kamu memahami mengapa.</p>
+      </div>
+
+      <div class="quiz-progress"><span id="qProgress">Soal 1 / 6</span><span id="qScore">Benar: 0</span></div>
+      <div class="quiz-card">
+        <span class="quiz-type-tag" id="qType"></span>
+        <div class="quiz-question" id="qQuestion"></div>
+        <div id="qBody"></div>
+        <div class="quiz-feedback" id="qFeedback"></div>
+        <div class="btn-row" style="margin-top:22px;">
+          <button class="btn btn-primary" id="qNextBtn" style="display:none;" onclick="nextQuestion()">Soal berikutnya →</button>
+        </div>
+      </div>
+
+      <div id="doneBox" style="display:none;text-align:center;margin-top:30px;">
+        <h3>Latihan selesai! 🎉</h3>
+        <p class="muted">Skor kamu: <strong id="finalScore"></strong>. Lanjutkan ke praktik jobsheet untuk mencoba langsung di trainer.</p>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn btn-ghost" onclick="location.reload()">Ulangi Latihan</button>
+          <a href="jobsheet.html" class="btn btn-primary">Lanjut ke Jobsheet</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">E-Modul Interaktif TITL · Sumber Belajar Praktik Penerangan Rumah Dasar · SMKN 2 Pemangkat</div>
+</footer>
+
+<script>const PAGE_TAHAP = 'Latihan';</script>
+<script src="js/main.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/tracking.js"></script>
+<script>
+const questions = [
+  {
+    type:'mc', label:'Pilihan Ganda',
+    q:'Komponen yang berfungsi untuk memutus dan menghubungkan arus menuju lampu adalah...',
+    options:['MCB','Saklar','Fitting','Stop kontak'], correct:1,
+    explain:'Saklar berfungsi untuk memutus dan menghubungkan aliran listrik menuju lampu.',
+    hint:'Pikirkan komponen yang biasa kamu tekan naik-turun di dinding untuk menyalakan lampu.'
+  },
+  {
+    type:'tf', label:'Benar / Salah',
+    q:'Saklar berfungsi untuk mengubah energi listrik menjadi energi cahaya.',
+    correct:false,
+    explain:'Salah. Yang mengubah energi listrik menjadi cahaya adalah lampu, bukan saklar.',
+    hint:'Ingat lagi: saklar hanya menyambung/memutus, bukan mengubah bentuk energi.'
+  },
+  {
+    type:'identify', label:'Identifikasi Gambar',
+    q:'Komponen apakah ini?',
+    symbol:'<rect x="10" y="14" width="20" height="12" rx="2" fill="none" stroke="#2E2A5E" stroke-width="2"/><line x1="16" y1="14" x2="16" y2="26" stroke="#2E2A5E" stroke-width="1.5"/><line x1="24" y1="14" x2="24" y2="26" stroke="#2E2A5E" stroke-width="1.5"/>',
+    options:['Saklar','Stop kontak','MCB','Fitting'], correct:2,
+    explain:'Simbol ini adalah MCB, pengaman otomatis pada rangkaian.',
+    hint:'Komponen ini biasanya dipasang paling awal sebagai pengaman rangkaian.'
+  },
+  {
+    type:'mc', label:'Pilihan Ganda',
+    q:'Alat yang berfungsi mengukur pemakaian daya listrik 1 fasa adalah...',
+    options:['MCB','kWh Meter','Terminal','Kotak sambung'], correct:1,
+    explain:'kWh Meter berfungsi sebagai alat pengukur pemakaian daya listrik 1 fasa.',
+    hint:'Alat ini biasanya dipasang oleh PLN di awal instalasi rumah, sebelum MCB.'
+  },
+  {
+    type:'tf', label:'Benar / Salah',
+    q:'Sebelum memasang instalasi, sumber listrik harus dalam kondisi OFF.',
+    correct:true,
+    explain:'Benar. Ini adalah prosedur keselamatan kerja dasar sebelum praktik instalasi.',
+    hint:'Ingat kembali poin pertama pada bagian keselamatan kerja di materi.'
+  },
+  {
+    type:'identify', label:'Identifikasi Gambar',
+    q:'Simbol apakah ini?',
+    symbol:'<circle cx="20" cy="20" r="12" fill="none" stroke="#2E2A5E" stroke-width="2"/><line x1="11.5" y1="11.5" x2="28.5" y2="28.5" stroke="#2E2A5E" stroke-width="2"/><line x1="28.5" y1="11.5" x2="11.5" y2="28.5" stroke="#2E2A5E" stroke-width="2"/>',
+    options:['Lampu','Saklar','Stop kontak','MCB'], correct:0,
+    explain:'Simbol lingkaran bersilang ini melambangkan titik lampu pada diagram instalasi.',
+    hint:'Bentuknya lingkaran dengan tanda silang di dalamnya — melambangkan titik beban.'
+  }
+];
+
+let idx = 0, score = 0, answered = false;
+
+function renderQuestion() {
+  answered = false;
+  const q = questions[idx];
+  document.getElementById('qProgress').textContent = `Soal ${idx+1} / ${questions.length}`;
+  document.getElementById('qScore').textContent = `Benar: ${score}`;
+  document.getElementById('qType').textContent = q.label;
+  document.getElementById('qQuestion').textContent = q.q;
+  document.getElementById('qFeedback').classList.remove('show');
+  document.getElementById('qNextBtn').style.display = 'none';
+
+  const body = document.getElementById('qBody');
+  body.innerHTML = '';
+
+  // Petunjuk (hint) opsional — tidak membocorkan jawaban, hanya arahan.
+  if (q.hint) {
+    const hintBtn = document.createElement('button');
+    hintBtn.className = 'hint-btn';
+    hintBtn.setAttribute('data-no-sfx', 'true');
+    hintBtn.innerHTML = '💡 Butuh petunjuk?';
+    const hintBox = document.createElement('div');
+    hintBox.className = 'hint-box';
+    hintBox.textContent = q.hint;
+    hintBtn.addEventListener('click', () => {
+      hintBox.classList.toggle('show');
+      hintBtn.innerHTML = hintBox.classList.contains('show') ? '💡 Sembunyikan petunjuk' : '💡 Butuh petunjuk?';
+    });
+    body.appendChild(hintBtn);
+    body.appendChild(hintBox);
+  }
+
+  if (q.type === 'mc' || q.type === 'identify') {
+    if (q.type === 'identify') {
+      const symWrap = document.createElement('div');
+      symWrap.style.cssText = 'background:var(--pink-bg);border:1.5px dashed var(--pink);border-radius:14px;padding:20px;margin-bottom:18px;width:120px;';
+      symWrap.innerHTML = `<svg viewBox="0 0 40 40" width="100%">${q.symbol}</svg>`;
+      body.appendChild(symWrap);
+    }
+    const opts = document.createElement('div');
+    opts.className = 'quiz-options';
+    q.options.forEach((opt, i) => {
+      const b = document.createElement('button');
+      b.className = 'quiz-opt';
+      b.setAttribute('data-no-sfx', 'true');
+      b.textContent = opt;
+      b.addEventListener('click', () => handleAnswer(i === q.correct, b, opts));
+      opts.appendChild(b);
+    });
+    body.appendChild(opts);
+  } else if (q.type === 'tf') {
+    const opts = document.createElement('div');
+    opts.className = 'quiz-options';
+    ['Benar','Salah'].forEach((label, i) => {
+      const val = i === 0;
+      const b = document.createElement('button');
+      b.className = 'quiz-opt';
+      b.setAttribute('data-no-sfx', 'true');
+      b.textContent = label;
+      b.addEventListener('click', () => handleAnswer(val === q.correct, b, opts));
+      opts.appendChild(b);
+    });
+    body.appendChild(opts);
+  }
+}
+
+function handleAnswer(isCorrect, btnEl, groupEl) {
+  if (answered) return;
+  answered = true;
+  const q = questions[idx];
+  [...groupEl.children].forEach(b => b.disabled = true);
+  btnEl.classList.add(isCorrect ? 'correct' : 'wrong');
+  isCorrect ? sfx.correct() : sfx.wrong();
+  if (isCorrect) score++;
+  const fb = document.getElementById('qFeedback');
+  fb.textContent = (isCorrect ? '✔ Benar! ' : '✘ Belum tepat. ') + q.explain;
+  fb.style.background = isCorrect ? '#E4F6E9' : '#FBE7E7';
+  fb.style.color = isCorrect ? '#1D5E36' : '#8C2F2F';
+  fb.classList.add('show');
+  document.getElementById('qNextBtn').style.display = 'inline-flex';
+  document.getElementById('qScore').textContent = `Benar: ${score}`;
+}
+
+function nextQuestion() {
+  idx++;
+  if (idx >= questions.length) {
+    document.querySelector('.quiz-progress').style.display = 'none';
+    document.querySelector('.quiz-card').style.display = 'none';
+    document.getElementById('doneBox').style.display = 'block';
+    document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+    sfx.success();
+    logEvent('Selesai Latihan', `Benar ${score} dari ${questions.length} soal`, score);
+    return;
+  }
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jobsheet — E-Modul TITL</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar">
+    <a href="index.html" class="brand">
+      <svg class="bulb" viewBox="0 0 24 24" fill="none"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.6 10.8c.6.45 1.1 1.2 1.1 2.2h5c0-1 .5-1.75 1.1-2.2A6 6 0 0012 3z" stroke="#D9678F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      E-Modul TITL
+    </a>
+    <button class="nav-toggle" aria-label="Buka menu"></button>
+    <div class="nav-links">
+      <a href="index.html">Beranda</a>
+      <a href="materi.html">Materi</a>
+      <a href="jobsheet.html" class="active">Praktik</a>
+      <a href="latihan.html">Latihan</a>
+      <a href="evaluasi.html">Evaluasi</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow-tag">Jobsheet 01</span>
+        <h2>Rangkaian Lampu dengan Saklar Tunggal</h2>
+        <p>Siswa mampu merangkai instalasi satu lampu menggunakan satu saklar tunggal.</p>
+      </div>
+
+      <div class="job-meta">
+        <div class="box">
+          <h4>Alat &amp; Bahan</h4>
+          <ul>
+            <li>Trainer instalasi penerangan</li>
+            <li>Kabel, Lampu, Fitting</li>
+            <li>Saklar, MCB</li>
+            <li>Obeng, Tang</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>Tujuan Praktik</h4>
+          <ul>
+            <li>Merangkai instalasi 1 lampu 1 saklar tunggal</li>
+            <li>Memeriksa kebenaran sambungan sebelum diuji</li>
+            <li>Menguji dan menganalisis hasil rangkaian</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="safety-note">
+        ⚠️ <div>Pastikan sumber listrik dalam kondisi <strong>OFF</strong> sebelum melakukan pemasangan.</div>
+      </div>
+
+      <!-- STEPPER -->
+      <h3>Langkah Praktik Interaktif</h3>
+      <div class="stepper">
+        <div class="stepper-head">
+          <span class="step-count" id="stepCount">Langkah 1 / 5</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+        <div class="step-view">
+          <div class="step-illust" id="stepIllust"></div>
+          <div class="step-text">
+            <h3 id="stepTitle"></h3>
+            <p id="stepDesc"></p>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:24px;">
+          <button class="btn btn-ghost btn-sm" id="prevBtn" onclick="changeStep(-1)">← Sebelumnya</button>
+          <button class="btn btn-primary btn-sm" id="nextBtn" onclick="changeStep(1)">Sudah, lanjut →</button>
+        </div>
+      </div>
+
+      <!-- CHECKLIST -->
+      <h3 style="margin-top:44px;">Periksa Rangkaian</h3>
+      <p class="muted">Centang setiap poin sebelum menyalakan sumber listrik.</p>
+      <ul class="check-list" id="checkList">
+        <li class="check-item"><input type="checkbox"> Sambungan kabel sudah sesuai diagram</li>
+        <li class="check-item"><input type="checkbox"> Tidak ada kabel terkelupas</li>
+        <li class="check-item"><input type="checkbox"> Terminal sudah terpasang dengan baik</li>
+        <li class="check-item"><input type="checkbox"> Saklar terpasang pada penghantar yang sesuai</li>
+        <li class="check-item"><input type="checkbox"> Lampu terpasang dengan benar</li>
+        <li class="check-item"><input type="checkbox"> MCB dalam kondisi OFF</li>
+        <li class="check-item"><input type="checkbox"> Tidak ada sambungan yang longgar</li>
+      </ul>
+      <button class="btn btn-primary" id="checkedBtn" disabled onclick="revealPengujian()">Rangkaian Sudah Diperiksa</button>
+
+      <!-- PENGUJIAN -->
+      <div id="pengujianSection" style="display:none;">
+        <h3 style="margin-top:44px;">Pengujian</h3>
+        <p class="muted">Sekarang lakukan pengujian pada trainer. Apa yang terjadi ketika saklar ON?</p>
+        <div class="quiz-card">
+          <div class="quiz-options" id="ujiOptions">
+            <button class="quiz-opt" data-correct="true" data-no-sfx="true">Lampu menyala</button>
+            <button class="quiz-opt" data-no-sfx="true">Lampu tetap mati</button>
+            <button class="quiz-opt" data-no-sfx="true">MCB langsung turun</button>
+            <button class="quiz-opt" data-no-sfx="true">Tidak terjadi apa-apa</button>
+          </div>
+          <div class="quiz-feedback" id="ujiFeedback"></div>
+        </div>
+      </div>
+
+      <!-- TROUBLESHOOTING -->
+      <div id="troubleSection" style="display:none;">
+        <h3 style="margin-top:44px;">Troubleshooting</h3>
+        <p class="muted">Jika hasil praktik tidak sesuai harapan, gunakan panduan ini.</p>
+        <div class="trouble-card">
+          <h4>💡 Lampu tidak menyala</h4>
+          <p class="muted" style="margin-bottom:8px;">Kemungkinan penyebab:</p>
+          <ol>
+            <li>MCB belum ON.</li>
+            <li>Lampu rusak.</li>
+            <li>Sambungan kabel terlepas.</li>
+            <li>Saklar tidak terhubung dengan benar.</li>
+            <li>Rangkaian tidak sesuai diagram.</li>
+          </ol>
+          <div class="trouble-tip">Coba periksa dari sumber listrik terlebih dahulu, lalu telusuri satu per satu menuju lampu.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">E-Modul Interaktif TITL · Sumber Belajar Praktik Penerangan Rumah Dasar · SMKN 2 Pemangkat</div>
+</footer>
+
+<script>const PAGE_TAHAP = 'Jobsheet';</script>
+<script src="js/main.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/tracking.js"></script>
+<script>
+const steps = [
+  {title:'Pasang MCB pada bagian sumber rangkaian.', desc:'Letakkan MCB pada jalur awal sebelum penghantar fasa menuju komponen lain.', icon:'<rect x="16" y="18" width="32" height="24" rx="4" fill="none" stroke="#2E2A5E" stroke-width="2.5"/><line x1="24" y1="18" x2="24" y2="42" stroke="#2E2A5E" stroke-width="1.5"/>'},
+  {title:'Hubungkan kabel dari keluaran MCB menuju saklar.', desc:'Sambungkan penghantar fasa dari terminal keluaran MCB ke terminal masuk saklar.', icon:'<line x1="10" y1="32" x2="54" y2="32" stroke="#2E2A5E" stroke-width="3" stroke-dasharray="6 5"/>'},
+  {title:'Hubungkan keluaran saklar menuju fitting lampu.', desc:'Sambungkan kabel dari terminal keluaran saklar ke salah satu terminal fitting.', icon:'<circle cx="20" cy="32" r="6" fill="none" stroke="#2E2A5E" stroke-width="2.5"/><line x1="26" y1="32" x2="48" y2="32" stroke="#2E2A5E" stroke-width="2.5"/><circle cx="48" cy="32" r="6" fill="none" stroke="#2E2A5E" stroke-width="2.5"/>'},
+  {title:'Hubungkan lampu dengan penghantar netral.', desc:'Sambungkan terminal fitting yang belum terhubung ke jalur netral sumber.', icon:'<circle cx="32" cy="26" r="10" fill="none" stroke="#2E2A5E" stroke-width="2.5"/><line x1="32" y1="36" x2="32" y2="50" stroke="#2E2A5E" stroke-width="2.5"/>'},
+  {title:'Periksa kembali seluruh sambungan sebelum mengaktifkan sumber listrik.', desc:'Pastikan tidak ada kabel terkelupas dan semua terminal terpasang kencang sebelum MCB dinyalakan.', icon:'<path d="M20 32l8 8 16-16" stroke="#159E93" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'}
+];
+let current = 0;
+function renderStep() {
+  const s = steps[current];
+  document.getElementById('stepCount').textContent = `Langkah ${current+1} / ${steps.length}`;
+  document.getElementById('progressFill').style.width = `${((current+1)/steps.length)*100}%`;
+  document.getElementById('stepTitle').textContent = `Langkah ${current+1}`;
+  document.getElementById('stepDesc').textContent = s.title + ' ' + s.desc;
+  document.getElementById('stepIllust').innerHTML = `<svg viewBox="0 0 64 64">${s.icon}</svg>`;
+  document.getElementById('prevBtn').disabled = current === 0;
+  document.getElementById('nextBtn').textContent = current === steps.length-1 ? 'Selesai ✓' : 'Sudah, lanjut →';
+}
+function changeStep(dir) {
+  const next = current + dir;
+  if (next < 0 || next >= steps.length) return;
+  current = next;
+  renderStep();
+}
+renderStep();
+
+// Checklist
+const checkItems = document.querySelectorAll('.check-item');
+checkItems.forEach(item => {
+  const cb = item.querySelector('input');
+  item.addEventListener('click', (e) => {
+    if (e.target !== cb) cb.checked = !cb.checked;
+    item.classList.toggle('checked', cb.checked);
+    updateCheckedBtn();
+  });
+});
+function updateCheckedBtn() {
+  const all = [...checkItems].every(i => i.querySelector('input').checked);
+  document.getElementById('checkedBtn').disabled = !all;
+}
+function revealPengujian() {
+  document.getElementById('pengujianSection').style.display = 'block';
+  document.getElementById('pengujianSection').scrollIntoView({behavior:'smooth', block:'start'});
+  logEvent('Checklist Pemeriksaan Selesai', 'Semua 7 poin sudah dicentang');
+}
+
+// Pengujian
+document.querySelectorAll('#ujiOptions .quiz-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const fb = document.getElementById('ujiFeedback');
+    document.querySelectorAll('#ujiOptions .quiz-opt').forEach(b => b.classList.remove('correct','wrong'));
+    if (btn.dataset.correct) {
+      btn.classList.add('correct');
+      fb.textContent = 'Tepat! Jika rangkaian benar, lampu akan menyala saat saklar di-ON-kan.';
+      fb.style.background = '#E4F6E9'; fb.style.color = '#1D5E36';
+      document.getElementById('troubleSection').style.display = 'none';
+      sfx.success();
+      logEvent('Selesai Jobsheet 01', 'Pengujian berhasil, lampu menyala');
+    } else {
+      btn.classList.add('wrong');
+      sfx.wrong();
+      fb.textContent = 'Hasil ini menandakan ada masalah pada rangkaian. Lihat panduan troubleshooting di bawah.';
+      fb.style.background = '#FBE7E7'; fb.style.color = '#8C2F2F';
+      document.getElementById('troubleSection').style.display = 'block';
+      logEvent('Jobsheet 01 - Perlu Troubleshooting', btn.textContent);
+    }
+    fb.classList.add('show');
+  });
+});
+</script>
+</body>
+</html>
