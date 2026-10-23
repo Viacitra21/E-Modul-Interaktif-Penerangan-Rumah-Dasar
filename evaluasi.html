@@ -51,32 +51,21 @@
 <script src="js/tracking.js"></script>
 <script src="js/quiz.js"></script>
 <script>
-const SYM_SAKLAR = '<circle cx="10" cy="20" r="3" fill="#2E2A5E"/><circle cx="30" cy="20" r="3" fill="#2E2A5E"/><line x1="13" y1="20" x2="24" y2="12" stroke="#2E2A5E" stroke-width="2"/><line x1="27" y1="20" x2="10" y2="20" stroke="#2E2A5E" stroke-width="2"/>';
 document.getElementById('startEvalBtn').addEventListener('click',()=>{document.getElementById('introBox').style.display='none';document.getElementById('quizRoot').style.display='block';startQuiz({
   root: 'quizRoot', mode: 'assessment', title: 'Hasil Evaluasi Akhir', passPct: 75,
   passMsg: 'Kamu sudah memahami materi dasar penerangan rumah dengan baik. Siap untuk praktik!',
   nextHref: 'materi.html', nextLabel: 'Pelajari Ulang Materi', logName: 'Selesai Evaluasi',
   questions: [
-    { level:1, cat:'Komponen', type:'mc', q:'Alat yang berfungsi mengukur pemakaian energi listrik rumah tangga 1 fasa adalah…',
-      options:['kWh meter','MCB','Terminal','Kotak sambung'], correct:0 },
-    { level:1, cat:'Simbol', type:'identify', q:'Simbol apakah ini pada diagram instalasi?', symbol: SYM_SAKLAR,
-      options:['Saklar tunggal','Lampu','MCB','Stop kontak'], correct:0 },
-    { level:2, cat:'Keselamatan', type:'mc', q:'Perbedaan utama penghantar fasa dan netral adalah…',
-      options:['Fasa bertegangan terhadap tanah, netral mendekati 0 volt','Fasa selalu berwarna biru, netral berwarna merah','Fasa hanya dipakai untuk stop kontak','Netral membawa tegangan lebih tinggi daripada fasa'], correct:0 },
-    { level:2, cat:'Komponen', type:'tf', q:'MCB dapat memutus rangkaian secara otomatis ketika arus melebihi batas sehingga melindungi instalasi.', correct:true },
-    { level:3, cat:'Rangkaian', type:'mc', q:'Dua lampu masing-masing 11 W dipasang paralel pada 220 V. Berapa arus total yang mengalir? (I = P / V)',
-      options:['0,1 A','0,05 A','1 A','0,5 A'], correct:0 },
-    { level:3, cat:'Rangkaian', type:'order', q:'Urutkan langkah pengujian rangkaian setelah selesai dirakit.',
-      items:['Periksa kembali seluruh sambungan','Naikkan tuas MCB ke posisi ON','Tekan saklar ke posisi ON','Amati lampu menyala'],
-      },
-    { level:4, cat:'Keselamatan', type:'mc', q:'MCB langsung turun (trip) begitu dinaikkan, walau saklar dalam posisi OFF. Dugaan yang paling kuat adalah…',
-      options:['Terjadi hubung singkat fasa-netral pada kabel atau sambungan sebelum saklar','Lampu terlalu terang','Saklar yang dipakai jenis tunggal','Steker belum dipasang'], correct:0 },
-    { level:4, cat:'Rangkaian', type:'mc', q:'Dua lampu dirangkai seri dengan satu saklar dan keduanya menyala redup. Penyebab paling mungkin adalah…',
-      options:['Tegangan terbagi di antara kedua lampu karena dipasang seri','Kabel netral terlalu panjang','MCB rusak','Saklar dipasang terbalik'], correct:0 },
-    { level:5, cat:'Keselamatan', type:'mc', q:'Rancangan A: saklar pada fasa, sambungan di terminal rapi dan berisolasi. Rancangan B: saklar pada netral, sambungan dipilin tanpa isolasi. Penilaian yang tepat adalah…',
-      options:['Rancangan A layak dipakai, rancangan B tidak aman','Keduanya layak karena lampu sama-sama menyala','Rancangan B lebih hemat sehingga lebih baik','Keduanya tidak layak karena memakai saklar'], correct:0 },
-    { level:6, cat:'Rangkaian', type:'mc', q:'Kamu diminta merancang dua lampu yang dinyalakan bersamaan oleh satu saklar dan tetap menyala jika salah satu lampu putus. Rancangan yang memenuhi adalah…',
-      options:['L → MCB → saklar → kotak sambung → dua lampu paralel → N','L → MCB → lampu 1 → lampu 2 → saklar → N','L → saklar → lampu 1 → lampu 2 (seri) → N tanpa MCB','L → MCB → dua lampu seri → saklar pada netral'], correct:0 }
+    { level: 1, cat: "Komponen", type: "mc", q: "Fungsi kotak sambung pada instalasi penerangan adalah...", options: ["Mengukur pemakaian daya", "Menyambung dan membagi kabel dengan aman dan rapi", "Memutus arus otomatis", "Mengubah listrik menjadi cahaya"], correct: 1 },
+    { level: 1, cat: "Keselamatan", type: "mc", q: "K3 adalah singkatan dari...", options: ["Kerja, Kontrol, dan Kualitas", "Keselamatan dan Kesehatan Kerja", "Kabel, Kotak, dan Kontak", "Kontrol Tiga Kabel"], correct: 1 },
+    { level: 2, cat: "Komponen", type: "mc", q: "Mengapa kWh meter dipasang sebelum MCB utama pada instalasi rumah?", options: ["Karena kWh meter lebih murah", "Agar seluruh pemakaian listrik yang melewati instalasi dapat terukur", "Agar MCB tidak perlu dipasang", "Agar lampu lebih terang"], correct: 1 },
+    { level: 2, cat: "Simbol", type: "mc", q: "Mengapa pada diagram instalasi digunakan simbol-simbol standar?", options: ["Agar gambar lebih berwarna", "Agar diagram dapat dibaca dan dipahami seragam oleh semua teknisi", "Agar kabel lebih murah", "Agar instalasi tidak perlu diperiksa"], correct: 1 },
+    { level: 3, cat: "Rangkaian", type: "mc", q: "Dua lampu 10 W dan 15 W dipasang paralel pada tegangan 220 V. Berapa arus total yang mengalir? (I = P / V)", options: ["0,05 A", "0,11 A", "1,1 A", "5,5 A"], correct: 1, explain: "Daya total = 25 W. I = 25 / 220 ≈ 0,11 A." },
+    { level: 3, cat: "Keselamatan", type: "mc", q: "Lampu pada trainer putus dan akan diganti. Langkah yang benar adalah...", options: ["Langsung mencabut lampu tanpa mematikan apa pun", "Mematikan saklar saja, lalu mengganti lampu", "Mematikan MCB, memastikan tidak ada tegangan dengan tespen, baru mengganti lampu", "Mengganti lampu dengan tangan basah agar licin"], correct: 2 },
+    { level: 4, cat: "Rangkaian", type: "mc", q: "Pada trainer, kedua lampu mati saat saklar ON dan MCB ON. Tespen menyala pada terminal masuk saklar, tetapi tidak menyala pada terminal keluar saklar. Kemungkinan penyebabnya adalah...", options: ["Kedua lampu putus bersamaan", "Saklar rusak atau sambungan di dalam saklar tidak menghantar", "Netral terlalu panjang", "Kotak sambung terlalu penuh"], correct: 1 },
+    { level: 4, cat: "Komponen", type: "mc", q: "MCB trainer langsung turun (trip) setiap kali saklar di-ON-kan. Penyebab yang paling mungkin adalah...", options: ["Lampu terlalu terang", "Kabel fasa dan netral bersentuhan atau terjadi hubung singkat pada rangkaian", "Saklar dipasang terlalu rendah", "Tespen tidak menyala"], correct: 1 },
+    { level: 5, cat: "Keselamatan", type: "mc", q: "Sebuah kelompok menyambung kabel yang terkelupas dengan isolasi seadanya, lalu lampu tetap menyala normal. Penilaian yang paling tepat adalah...", options: ["Sudah layak karena lampu menyala", "Belum layak, karena isolasi seadanya berisiko hubung singkat atau sengatan, sehingga kabel sebaiknya diperbaiki atau diganti", "Layak, asalkan MCB sering dimatikan", "Layak karena kabelnya masih berfungsi"], correct: 1 },
+    { level: 6, cat: "Rangkaian", type: "mc", q: "Kamu menambahkan 1 stop kontak pada trainer agar bisa dipakai kapan saja, terlepas dari saklar lampu. Rancangan yang paling tepat adalah...", options: ["Stop kontak dipasang seri setelah saklar lampu", "Stop kontak dipasang paralel dari jalur fasa dan netral setelah MCB, tanpa melewati saklar lampu", "Stop kontak dipasang di dalam fitting lampu", "Stop kontak dipasang tanpa MCB"], correct: 1 }
   ]
 });
 });
