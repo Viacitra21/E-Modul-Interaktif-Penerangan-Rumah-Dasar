@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // Generic modal open/close helper used across pages
 function openModal(id) {
   const el = document.getElementById(id);
-  if (el) el.classList.add('open');
+  if (el) { el.classList.add('open'); if (window.sfx) sfx.pop(); }
 }
 function closeModal(id) {
   const el = document.getElementById(id);
-  if (el) el.classList.remove('open');
+  if (el) { el.classList.remove('open'); if (window.sfx) sfx.close(); }
 }
 document.addEventListener('click', (e) => {
   if (e.target.classList && e.target.classList.contains('modal-overlay')) {
@@ -62,6 +62,8 @@ function initTabs(tabsSelector) {
       document.querySelectorAll('.tab-panel').forEach(p => {
         p.classList.toggle('active', p.id === target);
       });
+      if (window.sfx) sfx.tab();
+      document.dispatchEvent(new CustomEvent('tabchange', { detail: target }));
     });
   });
 }

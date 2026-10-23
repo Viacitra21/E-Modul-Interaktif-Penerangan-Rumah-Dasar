@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Materi — E-Modul TITL</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/extra.css">
 </head>
 <body>
 
@@ -104,70 +105,14 @@
 
       <!-- TAB 4: RANGKAIAN -->
       <div class="tab-panel" id="tab-rangkaian">
-        <p class="muted" style="margin-bottom:18px;">Diagram di bawah bukan sekadar gambar — klik tiap komponen atau tekan tombol untuk melihat aliran arusnya.</p>
-        <div class="circuit-panel">
-          <div class="circuit-svg-wrap">
-            <svg viewBox="0 0 260 300" width="100%">
-              <text x="122" y="20" fill="#fff" font-size="13" font-family="Fredoka">L</text>
-              <line x1="130" y1="26" x2="130" y2="60" stroke="#F2A0C4" stroke-width="3" id="wireL1"/>
-              <g class="node-clickable" onclick="showInfo('mcb')">
-                <rect x="100" y="60" width="60" height="34" rx="6" fill="#3A356F" stroke="#fff" stroke-width="1.5"/>
-                <text x="130" y="82" fill="#fff" font-size="12" text-anchor="middle" font-family="Fredoka">MCB</text>
-              </g>
-              <line x1="130" y1="94" x2="130" y2="130" stroke="#F2A0C4" stroke-width="3" id="wireL2"/>
-              <g class="node-clickable" onclick="showInfo('saklar')">
-                <rect x="95" y="130" width="70" height="34" rx="6" fill="#3A356F" stroke="#fff" stroke-width="1.5"/>
-                <text x="130" y="152" fill="#fff" font-size="12" text-anchor="middle" font-family="Fredoka">SAKLAR</text>
-              </g>
-              <line x1="130" y1="164" x2="130" y2="200" stroke="#F2A0C4" stroke-width="3" id="wireL3"/>
-              <circle id="lampGlow" cx="130" cy="222" r="34" fill="#E8A23D" opacity="0" style="transition:opacity .4s ease;"/>
-              <g class="node-clickable" onclick="showInfo('lampu')">
-                <circle cx="130" cy="222" r="24" fill="#3A356F" stroke="#fff" stroke-width="1.5"/>
-                <text x="130" y="226" fill="#fff" font-size="12" text-anchor="middle" font-family="Fredoka">LAMPU</text>
-              </g>
-              <line x1="130" y1="246" x2="130" y2="280" stroke="#F2A0C4" stroke-width="3" id="wireN"/>
-              <text x="124" y="296" fill="#fff" font-size="13" font-family="Fredoka">N</text>
-              <circle id="currentDot" cx="130" cy="26" r="5" fill="#E8A23D" opacity="0"/>
-            </svg>
-          </div>
-          <div class="circuit-info">
-            <h3>Dari diagram ke pemahaman</h3>
-            <p>Klik komponen pada diagram, atau tekan tombol di bawah untuk melihat bagaimana arus mengalir dari sumber sampai lampu menyala.</p>
-            <button class="btn btn-pink btn-sm" onclick="playCurrent()">▶ Tampilkan Aliran Arus</button>
-            <div id="circuitInfoBox">Klik salah satu komponen pada diagram untuk melihat penjelasannya di sini.</div>
-          </div>
-        </div>
+        <p class="muted" style="margin-bottom:18px;">Diagram ini bisa "berbicara": dengarkan penjelasan narator, ikuti arus yang bergerak, atau klik tiap komponen untuk mendengar bagiannya saja.</p>
+        <div id="diagRoot"></div>
       </div>
 
       <!-- TAB 5: SIMULASI -->
       <div class="tab-panel" id="tab-simulasi">
-        <div class="sim-panel">
-          <h3>Rangkaian Interaktif</h3>
-          <p class="muted">Hubungkan komponen berikut secara berurutan agar lampu dapat menyala. Klik komponen lalu klik slot yang sesuai.</p>
-          <div class="sim-comp-row" id="simComps">
-            <button class="sim-comp" data-val="sumber">Sumber Listrik</button>
-            <button class="sim-comp" data-val="mcb">MCB</button>
-            <button class="sim-comp" data-val="saklar">Saklar</button>
-            <button class="sim-comp" data-val="lampu">Lampu</button>
-          </div>
-          <div class="sim-slots" id="simSlots">
-            <div class="sim-slot" data-slot="0" data-need="sumber">1</div>
-            <span class="sim-arrow">→</span>
-            <div class="sim-slot" data-slot="1" data-need="mcb">2</div>
-            <span class="sim-arrow">→</span>
-            <div class="sim-slot" data-slot="2" data-need="saklar">3</div>
-            <span class="sim-arrow">→</span>
-            <div class="sim-slot" data-slot="3" data-need="lampu">4</div>
-          </div>
-          <div class="center lamp-glow" id="simLampGlow" style="margin:8px 0 4px;">
-            <svg viewBox="0 0 24 24" width="46" height="46" fill="none"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.6 10.8c.6.45 1.1 1.2 1.1 2.2h5c0-1 .5-1.75 1.1-2.2A6 6 0 0012 3z" stroke="#E8A23D" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="btn-row">
-            <button class="btn btn-primary btn-sm" onclick="checkSim()">Periksa Rangkaian</button>
-            <button class="btn btn-ghost btn-sm" onclick="resetSim()">Ulangi</button>
-          </div>
-          <div class="result-box" id="simResult"></div>
-        </div>
+        <p class="muted" style="margin-bottom:18px;">Rangkai sendiri di trainer virtual: pasang kabel, nyalakan MCB dan saklar, lalu lihat hasilnya. Coba juga kesalahan yang berbahaya (misalnya hubung singkat) agar paham mengapa K3 penting.</p>
+        <div id="simRoot"></div>
       </div>
 
       <!-- TAB 6: VIDEO -->
@@ -199,7 +144,7 @@
 <div class="modal-overlay" id="compModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('compModal')">✕</button>
-    <svg class="ic-lg" id="modalIcon" viewBox="0 0 24 24" fill="none"></svg>
+    <div class="modal-ic" id="modalIcon"></div>
     <h3 id="modalName"></h3>
     <dl>
       <dt>Fungsi</dt><dd id="modalFungsi"></dd>
@@ -210,15 +155,17 @@
 </div>
 
 <script>const PAGE_TAHAP = 'Materi';</script>
+<script src="js/config.js"></script>
 <script src="js/main.js"></script>
 <script src="js/sound.js"></script>
 <script src="js/tracking.js"></script>
+<script src="js/sim-engine.js"></script>
+<script src="js/simulator.js"></script>
+<script src="js/diagram.js"></script>
 <script>
 initTabs('.tabs');
 
-// Catatan: ikon di bawah adalah ilustrasi vektor orisinal (bukan foto),
-// dibuat supaya bebas hak cipta. Kalau kamu punya foto asli komponen/trainer
-// di lab, ganti saja <svg> pada comp-card & modal dengan <img src="assets/img/...">.
+// Setiap komponen memakai foto asli di assets/img/ (atau ikon vektor <svg> bila belum ada fotonya).
 const komponen = [
   {id:'lampu', nama:'Lampu', fungsi:'Mengubah energi listrik menjadi cahaya.', pasang:'Dipasang pada fitting, dihubungkan ke jalur keluaran saklar dan netral.', aman:'Pastikan daya lampu sesuai kapasitas fitting dan MCB.',
    icon:'<img src="assets/img/lampu.jpg" alt="Lampu">'},
@@ -228,6 +175,8 @@ const komponen = [
    icon:'<img src="assets/img/kwh meter.jpg" alt="kWh Meter">'},
   {id:'saklar', nama:'Saklar', fungsi:'Memutus dan menghubungkan aliran listrik menuju lampu.', pasang:'Dipasang pada jalur fasa, sebelum menuju fitting lampu.', aman:'Pasang pada jalur fasa (L), bukan netral.',
    icon:'<img src="assets/img/saklar.jpg" alt="Saklar">'},
+  {id:'stopkontak', nama:'Stop Kontak', fungsi:'Tempat menghubungkan peralatan listrik ke sumber daya melalui steker.', pasang:'Dihubungkan langsung ke jalur fasa dan netral dari sumber.', aman:'Jangan membebani satu stop kontak dengan daya berlebih.',
+   icon:'<img src="assets/img/stop kontak.jpg" alt="Stop Kontak">'},
   {id:'mcb', nama:'MCB', fungsi:'Pengaman otomatis yang memutus arus saat terjadi hubung singkat/beban lebih.', pasang:'Dipasang di awal rangkaian, setelah kWh meter.', aman:'Pilih rating arus MCB sesuai kebutuhan beban.',
    icon:'<img src="assets/img/MCB.jpg" alt="MCB">'},
   {id:'kabel', nama:'Kabel', fungsi:'Penghantar yang mengalirkan arus listrik antar komponen.', pasang:'Sambungkan sesuai warna dan fungsi jalur (fasa/netral/ground).', aman:'Gunakan kabel dengan ukuran sesuai kapasitas arus.',
@@ -240,14 +189,21 @@ const komponen = [
    icon:'<img src="assets/img/terminal.webp" alt="Terminal">'},
 ];
 
+// Foto (<img>) tampil sebagai gambar; ikon vektor dibungkus <svg>
+function iconHTML(icon, cls) {
+  return icon.trim().startsWith('<img')
+    ? `<div class="ic-photo ${cls === 'ic-lg' ? 'big' : ''}">${icon}</div>`
+    : `<svg class="${cls}" viewBox="0 0 24 24" fill="none">${icon}</svg>`;
+}
+
 const compGrid = document.getElementById('compGrid');
 komponen.forEach(k => {
   const card = document.createElement('button');
   card.className = 'comp-card';
-  card.innerHTML = `<svg class="ic" viewBox="0 0 24 24" fill="none">${k.icon}</svg><span>${k.nama}</span>`;
+  card.innerHTML = iconHTML(k.icon, 'ic') + `<span>${k.nama}</span>`;
   card.addEventListener('click', () => {
     document.getElementById('modalName').textContent = k.nama;
-    document.getElementById('modalIcon').innerHTML = k.icon;
+    document.getElementById('modalIcon').innerHTML = iconHTML(k.icon, 'ic-lg');
     document.getElementById('modalFungsi').textContent = k.fungsi;
     document.getElementById('modalPasang').textContent = k.pasang;
     document.getElementById('modalAman').textContent = k.aman;
@@ -264,104 +220,15 @@ mainVideo.addEventListener('loadedmetadata', () => {
   document.getElementById('videoPlaceholder').style.display = 'none';
 });
 
-// Circuit info
-const circuitInfo = {
-  mcb: 'MCB (Miniature Circuit Breaker) berfungsi sebagai pengaman yang otomatis memutus arus jika terjadi gangguan seperti hubung singkat atau beban lebih.',
-  saklar: 'Saklar berfungsi untuk menghubungkan dan memutuskan rangkaian menuju lampu, sehingga siswa dapat mengendalikan kapan lampu menyala atau mati.',
-  lampu: 'Lampu adalah beban akhir yang mengubah energi listrik menjadi cahaya ketika seluruh rangkaian dalam kondisi tersambung.'
-};
-function showInfo(key) {
-  document.getElementById('circuitInfoBox').textContent = circuitInfo[key];
-}
-function playCurrent() {
-  const dot = document.getElementById('currentDot');
-  const glow = document.getElementById('lampGlow');
-  const path = [
-    {x:130,y:26},{x:130,y:94},{x:130,y:164},{x:130,y:246},{x:130,y:280}
-  ];
-  dot.setAttribute('opacity', 1);
-  glow.setAttribute('opacity', 0);
-  document.getElementById('circuitInfoBox').textContent = 'Mengalirkan arus dari sumber (L) menuju MCB, saklar, lalu lampu...';
+// ---- Diagram (narator) dan Simulasi (trainer virtual) ----
+Diagram.init('diagRoot');
+Simulator.init('simRoot');
 
-  const segDuration = 340;
-  let seg = 0, segStart = null;
-  function step(ts) {
-    if (segStart === null) segStart = ts;
-    const t = Math.min((ts - segStart) / segDuration, 1);
-    const a = path[seg], b = path[seg + 1];
-    dot.setAttribute('cx', a.x + (b.x - a.x) * t);
-    dot.setAttribute('cy', a.y + (b.y - a.y) * t);
-    if (t >= 1) {
-      seg++;
-      segStart = ts;
-      if (seg >= path.length - 1) {
-        dot.setAttribute('opacity', 0);
-        glow.setAttribute('opacity', 0.8);
-        sfx.success();
-        document.getElementById('circuitInfoBox').textContent = 'Arus mengalir dari sumber (L) → MCB → Saklar → Lampu → Netral (N), menyalakan lampu.';
-        setTimeout(() => glow.setAttribute('opacity', 0), 2200);
-        return;
-      }
-    }
-    requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-// Simulation
-let simPicked = null;
-const simFilled = {};
-document.querySelectorAll('.sim-comp').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.sim-comp').forEach(b => b.classList.remove('picked'));
-    btn.classList.add('picked');
-    simPicked = btn.dataset.val;
-  });
-});
-document.querySelectorAll('.sim-slot').forEach(slot => {
-  slot.addEventListener('click', () => {
-    if (!simPicked) return;
-    slot.textContent = document.querySelector(`.sim-comp[data-val="${simPicked}"]`).textContent;
-    slot.classList.add('filled');
-    simFilled[slot.dataset.slot] = simPicked;
-    simPicked = null;
-    document.querySelectorAll('.sim-comp').forEach(b => b.classList.remove('picked'));
-  });
-});
-function checkSim() {
-  const box = document.getElementById('simResult');
-  const lamp = document.getElementById('simLampGlow');
-  const slots = document.querySelectorAll('.sim-slot');
-  let correct = true;
-  slots.forEach(s => { if (simFilled[s.dataset.slot] !== s.dataset.need) correct = false; });
-  box.classList.remove('result-ok','result-bad');
-  lamp.classList.remove('on');
-  if (Object.keys(simFilled).length < 4) {
-    box.textContent = 'Lengkapi semua slot terlebih dahulu.';
-    box.classList.add('result-bad','show');
-    sfx.wrong();
-    return;
-  }
-  if (correct) {
-    box.textContent = '✔ Rangkaian benar! Lampu dapat menyala.';
-    box.classList.add('result-ok','show');
-    lamp.classList.add('on');
-    sfx.success();
-  } else {
-    box.textContent = '✘ Rangkaian belum benar. Periksa hubungan saklar dengan lampu.';
-    box.classList.add('result-bad','show');
-    sfx.wrong();
-  }
-}
-function resetSim() {
-  document.querySelectorAll('.sim-slot').forEach(s => {
-    s.classList.remove('filled');
-    s.textContent = parseInt(s.dataset.slot) + 1;
-  });
-  Object.keys(simFilled).forEach(k => delete simFilled[k]);
-  document.getElementById('simResult').classList.remove('show','result-ok','result-bad');
-  document.getElementById('simLampGlow').classList.remove('on');
-}
+// Buka tab langsung dari link, mis. materi.html#simulasi
+const hashMap = { '#dasar': 'tab-dasar', '#komponen': 'tab-komponen', '#simbol': 'tab-simbol', '#rangkaian': 'tab-rangkaian', '#simulasi': 'tab-simulasi', '#video': 'tab-video' };
+if (hashMap[location.hash]) document.querySelector(`.tab-btn[data-tab="${hashMap[location.hash]}"]`).click();
+// Hentikan narator saat pindah tab
+document.addEventListener('tabchange', () => Diagram.stop());
 </script>
 </body>
 </html>

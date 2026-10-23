@@ -1,109 +1,129 @@
 /* =======================================================================
-   TRACKING & LOGIN — E-Modul TITL
-   Data akses & hasil belajar dikirim ke Google Sheets lewat Google Apps
-   Script Web App. Ganti SHEET_WEBAPP_URL di bawah setelah kamu deploy
-   Apps Script-nya (lihat panduan di apps-script/README.md).
+   LOGIN + PENCATATAN — E-Modul TITL
+   - Siswa wajib mengisi Nama, Kelas, dan Password (dibuat guru) setiap
+     kali membuka e-modul baru (sesi hilang saat tab/browser ditutup).
+   - Password DIPERIKA di Google Apps Script (tidak ada di kode web ini).
+   - Setelah login, aktivitas direkap ke Google Sheets (hanya terbaca guru).
+   URL Apps Script diatur di js/config.js
    ======================================================================= */
+const SESSION_KEY = 'emodul_session';
 
-const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzEHJCLQLAGrVIDUO6JXneBUVzyl1QfIZTZ0LMwWAuVDr5C8JzoTJbtikcuu0BJrWOVjA/exec";
+function getSession() {
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch (e) { return null; }
+}
+function getUser() { return getSession(); }          // kompatibel dengan kode lama
+function clearUser() { sessionStorage.removeItem(SESSION_KEY); location.reload(); }
+function configured() { return SHEET_WEBAPP_URL && !SHEET_WEBAPP_URL.startsWith('GANTI_'); }
 
-function getUser() {
-  const raw = localStorage.getItem('emodul_user');
-  return raw ? JSON.parse(raw) : null;
+async function apiPost(payload) {
+  const res = await fetch(SHEET_WEBAPP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  });
+  return res.json();
 }
 
-function setUser(nama, kelas) {
-  localStorage.setItem('emodul_user', JSON.stringify({ nama, kelas }));
-}
-
-function clearUser() {
-  localStorage.removeItem('emodul_user');
-  location.reload();
-}
-
-// Tampilkan form Nama & Kelas jika belum pernah diisi di device ini.
 function ensureLogin() {
-  const existing = getUser();
-  if (existing) return Promise.resolve(existing);
+  const existing = getSession();
+  if (existing && existing.token) return Promise.resolve(existing);
 
   return new Promise((resolve) => {
-    const overlay = document.createElement('div');
-    overlay.className = 'modal-overlay open';
-    overlay.id = 'loginOverlay';
-    overlay.innerHTML = `
-      <div class="modal-box">
-        <h3>Sebelum mulai...</h3>
-        <p class="muted" style="margin-bottom:18px;">Isi identitasmu supaya progres belajarmu bisa tercatat untuk guru.</p>
-        <label style="display:block;font-weight:600;font-size:.85rem;margin-bottom:6px;color:var(--indigo);">Nama Lengkap</label>
-        <input id="loginNama" type="text" placeholder="Nama kamu"
-          style="width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid var(--line);margin-bottom:14px;font-family:inherit;font-size:.95rem;">
-        <label style="display:block;font-weight:600;font-size:.85rem;margin-bottom:6px;color:var(--indigo);">Kelas</label>
-        <input id="loginKelas" type="text" placeholder="mis. XI TITL 1"
-          style="width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid var(--line);margin-bottom:20px;font-family:inherit;font-size:.95rem;">
-        <button class="btn btn-primary" id="loginSubmitBtn" style="width:100%;justify-content:center;">Mulai Belajar</button>
-        <p class="muted" style="font-size:.78rem;margin-top:12px;">Data ini hanya digunakan guru untuk memantau progres belajar, bukan untuk keperluan lain.</p>
+    const last = (() => { try { return JSON.parse(localStorage.getItem('emodul_last') || '{}'); } catch (e) { return {}; } })();
+    const screen = document.createElement('div');
+    screen.className = 'login-screen';
+    screen.innerHTML = `
+      <div class="login-card">
+        <div class="login-brand">
+          <svg viewBox="0 0 24 24" fill="none" width="34" height="34"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.6 10.8c.6.45 1.1 1.2 1.1 2.2h5c0-1 .5-1.75 1.1-2.2A6 6 0 0012 3z" stroke="#D9678F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>E-Modul TITL</span>
+        </div>
+        <h2>Masuk dulu ya</h2>
+        <p class="muted">Gunakan nama asli dan password yang diberikan gurumu.</p>
+        <label for="loginNama">Nama Lengkap</label>
+        <input id="loginNama" type="text" autocomplete="name" placeholder="Nama kamu" value="${(last.nama || '').replace(/"/g, '&quot;')}">
+        <label for="loginKelas">Kelas</label>
+        <input id="loginKelas" type="text" placeholder="mis. XI TITL 1" value="${(last.kelas || '').replace(/"/g, '&quot;')}">
+        <label for="loginPass">Password</label>
+        <div class="pass-row">
+          <input id="loginPass" type="password" autocomplete="off" placeholder="Password dari guru">
+          <button type="button" id="passEye" data-no-sfx="true" aria-label="Tampilkan password">👁</button>
+        </div>
+        <div class="login-msg" id="loginMsg" role="alert"></div>
+        <button class="btn btn-primary" id="loginSubmitBtn" style="width:100%;justify-content:center;">Masuk</button>
+        <p class="muted" style="font-size:.78rem;margin:12px 0 0;">Aktivitas belajarmu dicatat untuk guru. Data hanya dapat dilihat guru dan pembuat e-modul.</p>
       </div>`;
-    document.body.appendChild(overlay);
+    document.body.appendChild(screen);
+    const $ = (id) => screen.querySelector(id);
+    const msg = $('#loginMsg'), btn = $('#loginSubmitBtn');
+    const showMsg = (t) => { msg.textContent = t; msg.classList.toggle('show', !!t); };
 
-    const submit = () => {
-      const nama = overlay.querySelector('#loginNama').value.trim();
-      const kelas = overlay.querySelector('#loginKelas').value.trim();
-      if (!nama || !kelas) {
-        alert('Nama dan kelas wajib diisi ya.');
-        return;
-      }
-      setUser(nama, kelas);
-      overlay.remove();
-      resolve({ nama, kelas });
-    };
-    overlay.querySelector('#loginSubmitBtn').addEventListener('click', submit);
-    overlay.querySelectorAll('input').forEach(inp => {
-      inp.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+    $('#passEye').addEventListener('click', () => {
+      const i = $('#loginPass'); i.type = i.type === 'password' ? 'text' : 'password';
     });
+
+    async function submit() {
+      const nama = $('#loginNama').value.trim(), kelas = $('#loginKelas').value.trim(), password = $('#loginPass').value;
+      if (!nama || !kelas || !password) { showMsg('Nama, kelas, dan password wajib diisi.'); if (window.sfx) sfx.wrong(); return; }
+      if (!configured()) { showMsg('Alamat server (Apps Script) belum diatur. Guru/pembuat web perlu mengisi js/config.js.'); return; }
+      btn.disabled = true; btn.textContent = 'Memeriksa…'; showMsg('');
+      try {
+        const r = await apiPost({ action: 'login', nama, kelas, password });
+        if (r && r.ok) {
+          sessionStorage.setItem(SESSION_KEY, JSON.stringify({ nama, kelas, token: r.token }));
+          localStorage.setItem('emodul_last', JSON.stringify({ nama, kelas }));
+          screen.remove();
+          if (window.sfx) sfx.pageIn();
+          if (window.startMusic && window.isMusicPref && isMusicPref()) startMusic();
+          resolve({ nama, kelas, token: r.token });
+        } else {
+          showMsg((r && r.error) || 'Login gagal. Periksa kembali datamu.');
+          if (window.sfx) sfx.wrong();
+        }
+      } catch (e) {
+        showMsg('Tidak bisa terhubung ke server. Periksa internet lalu coba lagi.');
+      }
+      btn.disabled = false; btn.textContent = 'Masuk';
+    }
+    btn.addEventListener('click', submit);
+    screen.querySelectorAll('input').forEach(inp => inp.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); }));
+    setTimeout(() => (last.nama ? $('#loginPass') : $('#loginNama')).focus(), 50);
   });
 }
 
-// Kirim satu baris catatan ke Google Sheets.
+// Catat satu aktivitas ke Google Sheets (butuh token hasil login)
 function logEvent(aktivitas, detail = '', skor = '') {
-  const user = getUser();
-  if (!user) return;
+  const s = getSession();
+  if (!s || !s.token || !configured()) return;
   const payload = {
+    action: 'log',
     waktu: new Date().toISOString(),
-    nama: user.nama,
-    kelas: user.kelas,
+    nama: s.nama, kelas: s.kelas, token: s.token,
     halaman: document.title,
     tahap: (typeof PAGE_TAHAP !== 'undefined') ? PAGE_TAHAP : '',
-    aktivitas,
-    detail,
-    skor
+    aktivitas, detail, skor
   };
-  if (!SHEET_WEBAPP_URL || SHEET_WEBAPP_URL.startsWith('GANTI_')) {
-    console.warn('[tracking] SHEET_WEBAPP_URL belum diisi — data tidak dikirim.', payload);
-    return;
-  }
-  // mode 'no-cors' dipakai karena Apps Script Web App tidak mengirim header
-  // CORS untuk permintaan lintas origin; kita tidak perlu membaca responsnya.
-  fetch(SHEET_WEBAPP_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload)
+  apiPost(payload).then(r => {
+    if (r && r.error === 'unauthorized') {          // password diganti guru → login ulang
+      sessionStorage.removeItem(SESSION_KEY);
+      alert('Sesi login berakhir. Silakan masuk kembali.');
+      location.reload();
+    }
   }).catch(() => {});
 }
 
-// Tampilkan chip "Masuk sebagai ..." di footer setiap halaman.
 function renderUserChip() {
-  const user = getUser();
-  if (!user) return;
+  const s = getSession();
   const footer = document.querySelector('.site-footer .wrap');
-  if (!footer) return;
+  if (!s || !footer) return;
   const chip = document.createElement('div');
   chip.style.cssText = 'margin-top:8px;font-size:.8rem;';
-  chip.innerHTML = `Masuk sebagai <strong>${user.nama}</strong> (${user.kelas}) · <a href="#" id="gantiPenggunaLink" style="text-decoration:underline;">Ganti pengguna</a>`;
+  chip.innerHTML = `Masuk sebagai <strong>${s.nama.replace(/</g, '&lt;')}</strong> (${s.kelas.replace(/</g, '&lt;')}) · <a href="#" id="keluarLink" style="text-decoration:underline;">Keluar</a>`;
   footer.appendChild(chip);
-  document.getElementById('gantiPenggunaLink').addEventListener('click', (e) => {
+  document.getElementById('keluarLink').addEventListener('click', (e) => {
     e.preventDefault();
-    if (confirm('Ganti pengguna? Kamu perlu mengisi nama & kelas lagi di halaman ini.')) clearUser();
+    logEvent('Logout');
+    setTimeout(clearUser, 150);
   });
 }
 

@@ -1,5 +1,8 @@
 # E-Modul Interaktif TITL — Praktik Penerangan Rumah Dasar
 
+> **Update terbaru: lihat `PANDUAN_UPDATE.md`** (login password, simulasi trainer virtual, diagram bersuara, soal C1-C6, jobsheet PDF).
+
+
 Website statis (HTML, CSS, JavaScript murni — tanpa build tools) sesuai rancangan struktur web e-modul.
 
 ## Cara membuka di VS Code

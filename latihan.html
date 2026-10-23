@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Latihan — E-Modul TITL</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/extra.css">
 </head>
 <body>
 
@@ -29,30 +30,11 @@
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <span class="eyebrow-tag">Latihan</span>
+        <span class="eyebrow-tag">Latihan · belajar sambil mencoba</span>
         <h2>Uji pemahamanmu</h2>
-        <p>Latihan ini untuk belajar sambil mencoba — jawaban salah tidak masalah, yang penting kamu memahami mengapa.</p>
+        <p>10 soal bertingkat dari C1 (mengingat) sampai C6 (mencipta). Ada petunjuk opsional dan penjelasan di setiap soal, jadi salah pun tidak masalah, yang penting kamu paham alasannya.</p>
       </div>
-
-      <div class="quiz-progress"><span id="qProgress">Soal 1 / 6</span><span id="qScore">Benar: 0</span></div>
-      <div class="quiz-card">
-        <span class="quiz-type-tag" id="qType"></span>
-        <div class="quiz-question" id="qQuestion"></div>
-        <div id="qBody"></div>
-        <div class="quiz-feedback" id="qFeedback"></div>
-        <div class="btn-row" style="margin-top:22px;">
-          <button class="btn btn-primary" id="qNextBtn" style="display:none;" onclick="nextQuestion()">Soal berikutnya →</button>
-        </div>
-      </div>
-
-      <div id="doneBox" style="display:none;text-align:center;margin-top:30px;">
-        <h3>Latihan selesai! 🎉</h3>
-        <p class="muted">Skor kamu: <strong id="finalScore"></strong>. Lanjutkan ke praktik jobsheet untuk mencoba langsung di trainer.</p>
-        <div class="btn-row" style="justify-content:center;">
-          <button class="btn btn-ghost" onclick="location.reload()">Ulangi Latihan</button>
-          <a href="jobsheet.html" class="btn btn-primary">Lanjut ke Jobsheet</a>
-        </div>
-      </div>
+      <div id="quizRoot"></div>
     </div>
   </section>
 </main>
@@ -62,155 +44,59 @@
 </footer>
 
 <script>const PAGE_TAHAP = 'Latihan';</script>
+<script src="js/config.js"></script>
 <script src="js/main.js"></script>
 <script src="js/sound.js"></script>
 <script src="js/tracking.js"></script>
+<script src="js/quiz.js"></script>
 <script>
-const questions = [
-  {
-    type:'mc', label:'Pilihan Ganda',
-    q:'Komponen yang berfungsi untuk memutus dan menghubungkan arus menuju lampu adalah...',
-    options:['MCB','Saklar','Fitting','Stop kontak'], correct:1,
-    explain:'Saklar berfungsi untuk memutus dan menghubungkan aliran listrik menuju lampu.',
-    hint:'Pikirkan komponen yang biasa kamu tekan naik-turun di dinding untuk menyalakan lampu.'
-  },
-  {
-    type:'tf', label:'Benar / Salah',
-    q:'Saklar berfungsi untuk mengubah energi listrik menjadi energi cahaya.',
-    correct:false,
-    explain:'Salah. Yang mengubah energi listrik menjadi cahaya adalah lampu, bukan saklar.',
-    hint:'Ingat lagi: saklar hanya menyambung/memutus, bukan mengubah bentuk energi.'
-  },
-  {
-    type:'identify', label:'Identifikasi Gambar',
-    q:'Komponen apakah ini?',
-    symbol:'<rect x="10" y="14" width="20" height="12" rx="2" fill="none" stroke="#2E2A5E" stroke-width="2"/><line x1="16" y1="14" x2="16" y2="26" stroke="#2E2A5E" stroke-width="1.5"/><line x1="24" y1="14" x2="24" y2="26" stroke="#2E2A5E" stroke-width="1.5"/>',
-    options:['Saklar','Stop kontak','MCB','Fitting'], correct:2,
-    explain:'Simbol ini adalah MCB, pengaman otomatis pada rangkaian.',
-    hint:'Komponen ini biasanya dipasang paling awal sebagai pengaman rangkaian.'
-  },
-  {
-    type:'mc', label:'Pilihan Ganda',
-    q:'Alat yang berfungsi mengukur pemakaian daya listrik 1 fasa adalah...',
-    options:['MCB','kWh Meter','Terminal','Kotak sambung'], correct:1,
-    explain:'kWh Meter berfungsi sebagai alat pengukur pemakaian daya listrik 1 fasa.',
-    hint:'Alat ini biasanya dipasang oleh PLN di awal instalasi rumah, sebelum MCB.'
-  },
-  {
-    type:'tf', label:'Benar / Salah',
-    q:'Sebelum memasang instalasi, sumber listrik harus dalam kondisi OFF.',
-    correct:true,
-    explain:'Benar. Ini adalah prosedur keselamatan kerja dasar sebelum praktik instalasi.',
-    hint:'Ingat kembali poin pertama pada bagian keselamatan kerja di materi.'
-  },
-  {
-    type:'identify', label:'Identifikasi Gambar',
-    q:'Simbol apakah ini?',
-    symbol:'<circle cx="20" cy="20" r="12" fill="none" stroke="#2E2A5E" stroke-width="2"/><line x1="11.5" y1="11.5" x2="28.5" y2="28.5" stroke="#2E2A5E" stroke-width="2"/><line x1="28.5" y1="11.5" x2="11.5" y2="28.5" stroke="#2E2A5E" stroke-width="2"/>',
-    options:['Lampu','Saklar','Stop kontak','MCB'], correct:0,
-    explain:'Simbol lingkaran bersilang ini melambangkan titik lampu pada diagram instalasi.',
-    hint:'Bentuknya lingkaran dengan tanda silang di dalamnya — melambangkan titik beban.'
-  }
-];
-
-let idx = 0, score = 0, answered = false;
-
-function renderQuestion() {
-  answered = false;
-  const q = questions[idx];
-  document.getElementById('qProgress').textContent = `Soal ${idx+1} / ${questions.length}`;
-  document.getElementById('qScore').textContent = `Benar: ${score}`;
-  document.getElementById('qType').textContent = q.label;
-  document.getElementById('qQuestion').textContent = q.q;
-  document.getElementById('qFeedback').classList.remove('show');
-  document.getElementById('qNextBtn').style.display = 'none';
-
-  const body = document.getElementById('qBody');
-  body.innerHTML = '';
-
-  // Petunjuk (hint) opsional — tidak membocorkan jawaban, hanya arahan.
-  if (q.hint) {
-    const hintBtn = document.createElement('button');
-    hintBtn.className = 'hint-btn';
-    hintBtn.setAttribute('data-no-sfx', 'true');
-    hintBtn.innerHTML = '💡 Butuh petunjuk?';
-    const hintBox = document.createElement('div');
-    hintBox.className = 'hint-box';
-    hintBox.textContent = q.hint;
-    hintBtn.addEventListener('click', () => {
-      hintBox.classList.toggle('show');
-      hintBtn.innerHTML = hintBox.classList.contains('show') ? '💡 Sembunyikan petunjuk' : '💡 Butuh petunjuk?';
-    });
-    body.appendChild(hintBtn);
-    body.appendChild(hintBox);
-  }
-
-  if (q.type === 'mc' || q.type === 'identify') {
-    if (q.type === 'identify') {
-      const symWrap = document.createElement('div');
-      symWrap.style.cssText = 'background:var(--pink-bg);border:1.5px dashed var(--pink);border-radius:14px;padding:20px;margin-bottom:18px;width:120px;';
-      symWrap.innerHTML = `<svg viewBox="0 0 40 40" width="100%">${q.symbol}</svg>`;
-      body.appendChild(symWrap);
-    }
-    const opts = document.createElement('div');
-    opts.className = 'quiz-options';
-    q.options.forEach((opt, i) => {
-      const b = document.createElement('button');
-      b.className = 'quiz-opt';
-      b.setAttribute('data-no-sfx', 'true');
-      b.textContent = opt;
-      b.addEventListener('click', () => handleAnswer(i === q.correct, b, opts));
-      opts.appendChild(b);
-    });
-    body.appendChild(opts);
-  } else if (q.type === 'tf') {
-    const opts = document.createElement('div');
-    opts.className = 'quiz-options';
-    ['Benar','Salah'].forEach((label, i) => {
-      const val = i === 0;
-      const b = document.createElement('button');
-      b.className = 'quiz-opt';
-      b.setAttribute('data-no-sfx', 'true');
-      b.textContent = label;
-      b.addEventListener('click', () => handleAnswer(val === q.correct, b, opts));
-      opts.appendChild(b);
-    });
-    body.appendChild(opts);
-  }
-}
-
-function handleAnswer(isCorrect, btnEl, groupEl) {
-  if (answered) return;
-  answered = true;
-  const q = questions[idx];
-  [...groupEl.children].forEach(b => b.disabled = true);
-  btnEl.classList.add(isCorrect ? 'correct' : 'wrong');
-  isCorrect ? sfx.correct() : sfx.wrong();
-  if (isCorrect) score++;
-  const fb = document.getElementById('qFeedback');
-  fb.textContent = (isCorrect ? '✔ Benar! ' : '✘ Belum tepat. ') + q.explain;
-  fb.style.background = isCorrect ? '#E4F6E9' : '#FBE7E7';
-  fb.style.color = isCorrect ? '#1D5E36' : '#8C2F2F';
-  fb.classList.add('show');
-  document.getElementById('qNextBtn').style.display = 'inline-flex';
-  document.getElementById('qScore').textContent = `Benar: ${score}`;
-}
-
-function nextQuestion() {
-  idx++;
-  if (idx >= questions.length) {
-    document.querySelector('.quiz-progress').style.display = 'none';
-    document.querySelector('.quiz-card').style.display = 'none';
-    document.getElementById('doneBox').style.display = 'block';
-    document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
-    sfx.success();
-    logEvent('Selesai Latihan', `Benar ${score} dari ${questions.length} soal`, score);
-    return;
-  }
-  renderQuestion();
-}
-
-renderQuestion();
+const SYM_LAMPU = '<circle cx="20" cy="20" r="12" fill="none" stroke="#2E2A5E" stroke-width="2"/><line x1="11.5" y1="11.5" x2="28.5" y2="28.5" stroke="#2E2A5E" stroke-width="2"/><line x1="28.5" y1="11.5" x2="11.5" y2="28.5" stroke="#2E2A5E" stroke-width="2"/>';
+startQuiz({
+  root: 'quizRoot', mode: 'practice', title: 'Hasil Latihan', passPct: 70,
+  passMsg: 'Bagus! Kamu siap lanjut ke praktik. Coba Simulasi Trainer Virtual dulu, lalu buka Jobsheet.',
+  nextHref: 'jobsheet.html', nextLabel: 'Lanjut ke Jobsheet', logName: 'Selesai Latihan',
+  questions: [
+    { level:1, type:'mc', q:'Alat pengaman otomatis yang memutus arus saat terjadi hubung singkat atau beban berlebih disebut…',
+      options:['MCB','Saklar','Fitting','Steker'], correct:0,
+      hint:'Singkatan dari Miniature Circuit Breaker, biasanya dipasang paling awal pada rangkaian.',
+      explain:'MCB berfungsi sebagai pengaman otomatis: memutus arus ketika terjadi hubung singkat atau beban berlebih.' },
+    { level:1, type:'identify', q:'Simbol apakah ini pada diagram instalasi?', symbol: SYM_LAMPU,
+      options:['Lampu','Saklar','Stop kontak','MCB'], correct:0,
+      hint:'Bentuknya lingkaran bersilang, melambangkan titik beban penerangan.',
+      explain:'Lingkaran dengan tanda silang adalah simbol titik lampu.' },
+    { level:2, type:'mc', q:'Mengapa saklar harus dipasang pada penghantar fasa (L), bukan pada netral (N)?',
+      options:['Agar saat saklar OFF, lampu dan fittingnya tidak bertegangan','Agar lampu menyala lebih terang','Agar kabel yang dipakai lebih sedikit','Agar MCB tidak perlu dipasang'], correct:0,
+      hint:'Pikirkan bagian mana yang tetap "hidup" jika saklar memutus jalur netral.',
+      explain:'Jika saklar di fasa, saat OFF seluruh bagian setelah saklar tidak bertegangan sehingga aman saat mengganti lampu.' },
+    { level:2, type:'tf', q:'Fitting berfungsi mengubah energi listrik menjadi cahaya.', correct:false,
+      hint:'Bedakan antara dudukan lampu dan lampu itu sendiri.',
+      explain:'Salah. Fitting adalah dudukan sekaligus penghubung lampu ke penghantar. Yang mengubah energi listrik menjadi cahaya adalah lampunya.' },
+    { level:3, type:'order', q:'Urutkan aliran arus pada rangkaian 1 lampu 1 saklar, dari sumber sampai kembali ke sumber.',
+      items:['Penghantar fasa (L) dari sumber','MCB','Saklar','Lampu','Penghantar netral (N) kembali ke sumber'],
+      hint:'Arus selalu melewati pengaman lebih dulu, lalu pengendali, baru beban.',
+      explain:'Arus mengalir dari fasa, melalui pengaman (MCB), pengendali (saklar), beban (lampu), lalu kembali lewat netral.' },
+    { level:3, type:'mc', q:'Sebuah lampu LED 22 W dipasang pada tegangan 220 V. Berapa arus yang mengalir pada lampu itu? (I = P / V)',
+      options:['0,1 A','1 A','10 A','0,01 A'], correct:0,
+      hint:'Bagi daya dengan tegangan: 22 dibagi 220.',
+      explain:'I = P / V = 22 / 220 = 0,1 A.' },
+    { level:4, type:'mc', q:'MCB ON dan saklar ON, tetapi lampu mati. Hasil ukur: ada tegangan di terminal masuk saklar, tidak ada di terminal keluarnya. Bagian yang paling mungkin bermasalah adalah…',
+      options:['Kontak saklar atau sambungan terminal saklar','Lampu putus','Kabel netral terputus','MCB rusak'], correct:0,
+      hint:'Telusuri: tegangan hilang di antara dua titik mana?',
+      explain:'Tegangan hilang antara terminal masuk dan keluar saklar, sehingga masalahnya pada saklar itu sendiri atau sambungannya.' },
+    { level:4, type:'mc', q:'Pada rangkaian dua lampu paralel dengan satu saklar, salah satu lampu putus. Apa yang terjadi pada lampu yang satunya?',
+      options:['Tetap menyala','Ikut padam','Menyala redup','Menyala lebih terang dua kali lipat'], correct:0,
+      hint:'Pada rangkaian paralel, tiap lampu punya jalur arus sendiri.',
+      explain:'Pada rangkaian paralel setiap lampu mendapat tegangan penuh lewat jalurnya masing-masing, sehingga lampu lain tetap menyala.' },
+    { level:5, type:'mc', q:'Temanmu memasang saklar pada kabel netral karena "lampunya tetap menyala dan bisa dimatikan". Penilaian yang paling tepat adalah…',
+      options:['Tidak aman: saat saklar OFF, fitting tetap bertegangan fasa, saklar harus dipindah ke fasa','Aman, karena lampu tetap bisa dimatikan','Aman asalkan memakai kabel yang tebal','Tidak masalah selama MCB dalam keadaan ON'], correct:0,
+      hint:'Nilai dari sisi keselamatan: bagian mana yang masih bertegangan saat saklar OFF?',
+      explain:'Walau lampu padam, fasa tetap sampai ke fitting sehingga berbahaya. Saklar wajib dipasang pada penghantar fasa.' },
+    { level:6, type:'order', q:'Rancang urutan kerja yang paling aman untuk memasang rangkaian 1 lampu 1 saklar di trainer.',
+      items:['Pastikan sumber listrik dan MCB dalam posisi OFF','Pasang MCB, saklar, dan fitting pada papan trainer','Sambung kabel sesuai diagram: L → MCB → saklar → lampu → N','Periksa semua sambungan dengan checklist','Naikkan MCB ke ON lalu uji saklar'],
+      hint:'Keselamatan dulu, perakitan, pemeriksaan, baru pengujian.',
+      explain:'Urutan aman: matikan sumber, pasang komponen, sambung kabel, periksa, baru uji dengan MCB ON.' }
+  ]
+});
 </script>
 </body>
 </html>

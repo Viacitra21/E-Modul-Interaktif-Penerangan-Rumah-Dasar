@@ -1,80 +1,48 @@
-# Setup: Data Pengguna & Hasil Belajar ke Google Sheets
+# Setup Login Password + Rekap ke Google Sheets (sekali saja, ±10 menit)
 
-Setelah setup, Google Sheet kamu akan otomatis punya **2 tab**:
+## Cara kerjanya
+1. Siswa membuka e-modul, diminta **Nama, Kelas, Password**.
+2. Password diperiksa oleh **Google Apps Script** (bukan oleh kode web), jadi tidak bisa diintip lewat "View Source".
+3. Bila benar, siswa masuk dan semua aktivitasnya direkap ke Google Sheet milik guru/pembuat web.
+4. Setiap membuka e-modul baru (tab/browser baru), siswa harus login lagi.
+5. Salah password 5x -> diblokir sementara 5 menit.
 
-### Tab "Rekap" — ringkasan per siswa (sesuai desain revisi)
-Satu baris per siswa, terus diperbarui setiap kali ada aktivitas baru:
+## Langkah setup
 
-| Nama | Kelas | Petunjuk | Materi | Latihan | Jobsheet | Skor | Progres | Terakhir |
-|---|---|---|---|---|---|---|---|---|
-| Via | XI TITL 1 | ✓ | ✓ | ✓ | - | 5/6 | 75% | 10 Sep 2026 |
-
-- ✓ = halaman tersebut sudah pernah dibuka siswa, `-` = belum.
-- **Skor** = hasil Latihan otomatis (jumlah jawaban benar dari total soal). Jobsheet dinilai terpisah oleh guru, belum masuk skor ini.
-- **Progres** = persentase tahap yang sudah diakses (Petunjuk, Materi, Latihan, Jobsheet) dari total 4 tahap.
-- **Terakhir** = tanggal aktivitas terakhir siswa di e-modul.
-
-Ini yang paling praktis untuk dibuka guru sehari-hari atau didownload jadi Excel.
-
-### Tab "Log" — catatan mentah lengkap (backup / audit trail)
-Setiap kejadian dicatat sebagai satu baris terpisah (Waktu, Nama, Kelas, Halaman, Tahap, Aktivitas, Detail, Skor), termasuk:
-- **Akses Halaman** — setiap kali siswa membuka salah satu halaman
-- **Selesai Latihan** — skor latihan (mis. "Benar 5 dari 6 soal")
-- **Checklist Pemeriksaan Selesai** & **Selesai Jobsheet 01 / Perlu Troubleshooting** — progres praktik
-- **Selesai Evaluasi** — skor akhir + persentase per indikator (Komponen, Simbol, Rangkaian, Keselamatan)
-
-Tab ini tidak pernah menimpa data lama — cocok sebagai backup riwayat lengkap kalau sewaktu-waktu tab Rekap perlu dihitung ulang.
-
-## Langkah setup (± 10 menit, sekali saja)
-
-1. **Buat Google Sheet baru**
-   Buka [sheets.google.com](https://sheets.google.com) → buat sheet kosong → beri nama misalnya `Data E-Modul TITL`.
-
-2. **Buka editor Apps Script**
-   Di Google Sheet: menu `Extensions` (Ekstensi) → `Apps Script`.
-
-3. **Tempel kode backend**
-   Hapus semua kode default di editor, lalu salin seluruh isi file `apps-script/Code.gs` (di folder proyek ini) ke sana. Simpan (`Ctrl+S`).
-
-4. **Deploy sebagai Web App**
-   - Klik tombol **Deploy** (kanan atas) → **New deployment**.
-   - Klik ikon gerigi di sebelah "Select type" → pilih **Web app**.
-   - Isi:
-     - **Execute as**: `Me` (akun Google kamu)
-     - **Who has access**: `Anyone`
-   - Klik **Deploy**. Google mungkin minta izin akses — klik **Authorize access**, pilih akun kamu, lalu klik **Advanced** → **Go to (nama project) (unsafe)** → **Allow**. (Ini normal untuk script buatan sendiri.)
-   - Setelah selesai, **copy Web App URL** yang muncul (bentuknya seperti `https://script.google.com/macros/s/XXXXXXX/exec`).
-
-5. **Tempel URL ke website**
-   Buka file `js/tracking.js` di proyek e-modul, cari baris ini di paling atas:
+1. **Buat Google Sheet baru** (sheets.google.com), mis. "Data E-Modul TITL".
+   Sheet ini **privat secara bawaan**: hanya akun pemilik dan akun yang kamu undang (tombol *Share*) yang bisa melihat.
+   Untuk "hanya guru dan pembuat web": klik *Share* lalu undang **akun Google guru** saja. Jangan pilih "Anyone with the link".
+2. Menu **Extensions > Apps Script**. Hapus kode bawaan, tempel seluruh isi `apps-script/Code.gs`, simpan.
+3. **Atur password** (jangan tulis di kode):
+   ikon gerigi **Project Settings** > bagian **Script properties** > **Add script property**
+   - Property: `PASSWORD`
+   - Value: password yang akan dibagikan ke siswa
+   Klik **Save script properties**.
+4. (Opsional) Pilih fungsi `cekKonfigurasi` di dropdown lalu **Run** untuk memastikan password terpasang.
+5. **Deploy**: tombol *Deploy* > *New deployment* > ikon gerigi > **Web app**
+   - Execute as: **Me**
+   - Who has access: **Anyone**
+   Klik Deploy, izinkan akses (Advanced > Go to ... > Allow), lalu **salin Web App URL**.
+6. Buka **`js/config.js`** di proyek web, tempel URL tadi:
    ```js
-   const SHEET_WEBAPP_URL = "GANTI_DENGAN_URL_WEB_APP_APPS_SCRIPT_KAMU";
+   const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/XXXX/exec";
    ```
-   Ganti dengan URL yang kamu copy tadi, lalu simpan.
+7. Commit & push ke GitHub (Vercel otomatis memperbarui).
 
-6. **Selesai — coba tes**
-   Buka `index.html` di browser, isi nama & kelas saat diminta, lalu buka-buka beberapa halaman. Cek Google Sheet kamu — baris baru akan otomatis muncul di sheet bernama `Log`.
+> "Anyone" di langkah 5 hanya berarti web e-modul boleh mengirim data ke script. **Isi spreadsheet tetap privat**, dan alamat script tidak menampilkan data apa pun saat dibuka.
 
-## Sudah pernah setup versi sebelumnya?
-Kalau kamu sudah pernah deploy Apps Script versi lama (yang cuma punya tab "Log"), tinggal:
-1. Buka Apps Script yang sama (`Extensions > Apps Script` dari Sheet yang sama).
-2. Hapus semua kode lama, tempel ulang isi `Code.gs` yang baru ini.
-3. Deploy ulang lewat `Deploy > Manage deployments` → edit (ikon pensil) → Version: `New version` → Deploy.
-   URL Web App tetap sama, jadi **tidak perlu** mengubah apa pun di `js/tracking.js`.
-4. Tab "Rekap" akan otomatis muncul begitu ada aktivitas baru dari siswa.
+## Sudah pernah setup versi lama?
+- Tempel ulang `Code.gs` yang baru, atur `PASSWORD` (langkah 3), lalu **Deploy > Manage deployments > pensil > Version: New version > Deploy**. URL tetap sama.
+- Kolom baru **Evaluasi** otomatis ditambahkan di tab Rekap.
+- Pindahkan URL lama dari `tracking.js` ke `js/config.js`.
 
-## Kalau kamu mengubah kode Apps Script nanti
+## Mengganti password
+Ubah nilai `PASSWORD` di Script properties. Semua sesi lama otomatis tidak berlaku, siswa diminta login ulang dengan password baru.
 
-Setiap kali kamu mengedit `Code.gs` di Apps Script, kamu perlu men-deploy ulang supaya perubahan aktif:
-`Deploy` → `Manage deployments` → klik ikon pensil pada deployment yang ada → ubah **Version** ke `New version` → **Deploy**. URL-nya tetap sama, tidak perlu diganti lagi di `tracking.js`.
+## Isi Sheet
+**Tab Rekap** (satu baris per siswa): `Nama | Kelas | Petunjuk | Materi | Latihan | Jobsheet | Skor | Progres | Terakhir | Evaluasi`
+**Tab Log** (catatan mentah): Login, Login GAGAL, Akses Halaman, Selesai Latihan (skor/10), Selesai Evaluasi (skor + capaian C1-C6 + indikator), Simulasi Level 1/2 Berhasil (+ pelanggaran K3), Buka/Unduh Jobsheet, Checklist, Logout.
+Backup ke Excel: **File > Download > Microsoft Excel (.xlsx)**.
 
-## Backup ke Excel
-
-Data sudah otomatis tersimpan real-time di Google Sheets. Untuk backup sebagai file Excel kapan saja:
-`File` → `Download` → `Microsoft Excel (.xlsx)` pada Google Sheet kamu.
-
-Kamu juga bisa membuat filter/pivot table langsung di Sheet itu untuk melihat, misalnya, siapa saja yang belum mengerjakan Evaluasi, atau rata-rata skor per kelas.
-
-## Catatan privasi
-
-Karena `Who has access` di-set `Anyone`, siapa pun yang tahu URL Web App bisa mengirim data ke sheet ini — cukup aman untuk kebutuhan kelas/sekolah, tapi jangan bagikan URL tersebut secara publik di luar keperluan e-modul ini. Sheet itu sendiri tetap privat sesuai pengaturan berbagi Google Drive kamu.
+## Batas keamanan (jujur)
+Ini pengaman tingkat kelas: mencegah orang luar mengisi data dan membatasi akses ke siswa yang tahu password. Halaman web itu sendiri tetap file publik di internet; untuk menyembunyikan seluruh isi web dari orang luar, gunakan fitur *Password Protection* Vercel (berbayar) atau hosting khusus.
