@@ -37,10 +37,10 @@
 - Pindahkan URL lama dari `tracking.js` ke `js/config.js`.
 
 ## Mengaktifkan Asisten AI (revisi 2)
-1. Buat kunci API di https://console.anthropic.com (menu *API keys*). Pasang batas pengeluaran bulanan di akun itu.
+1. Buat kunci API di https://console.groq.com (menu *API keys*). Pasang batas pengeluaran bulanan di akun itu.
 2. Di Apps Script: *Project Settings* > *Script properties* > tambahkan:
-   - `ANTHROPIC_API_KEY` = kunci tadi (JANGAN ditulis di kode / GitHub)
-   - (opsional) `AI_MODEL` = nama model; bila kosong dipakai `claude-haiku-5-5`
+   - `GROQ_API_KEY` = kunci tadi (JANGAN ditulis di kode / GitHub)
+   - (opsional) `AI_MODEL` = nama model; bila kosong dipakai `llama-3.3-70b-versatile`
 3. Tempel `Code.gs` terbaru, lalu **Deploy > Manage deployments > pensil > Version: New version > Deploy** (URL tetap sama).
    Saat pertama kali, Google meminta izin baru (*Connect to an external service*), izinkan.
 4. Jalankan `cekKonfigurasi` untuk memastikan PASSWORD dan kunci AI terbaca.

@@ -10,7 +10,7 @@
 
 ## Langkah memasang
 1. Salin semua file hasil revisi ke proyek (jangan hapus `assets/` dan `js/config.js` milikmu).
-2. **WAJIB untuk fitur AI & pencatatan baru**: ikuti bagian *Mengaktifkan Asisten AI* di `apps-script/README.md` (tempel `Code.gs` baru, isi `ANTHROPIC_API_KEY`, deploy **New version**). Sebelum ini dilakukan, e-modul tetap berjalan normal, hanya AI yang menampilkan pesan "belum diaktifkan".
+2. **WAJIB untuk fitur AI & pencatatan baru**: ikuti bagian *Mengaktifkan Asisten AI* di `apps-script/README.md` (tempel `Code.gs` baru, isi `GROQ_API_KEY`, deploy **New version**). Sebelum ini dilakukan, e-modul tetap berjalan normal, hanya AI yang menampilkan pesan "belum diaktifkan".
 3. Uji di HP: login, buka Materi > Simulasi > Contoh Rangkaian, coba cubit/geser, ketuk terminal, buka 🤖.
 4. `git add . ; git commit ; git push`. Semua file memakai `?v=2` agar browser siswa memuat versi baru.
 

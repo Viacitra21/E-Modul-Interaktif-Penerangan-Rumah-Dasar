@@ -6,8 +6,8 @@
  *
  * SEBELUM DEPLOY, atur di Project Settings (ikon gerigi) > Script properties:
  *   PASSWORD            (wajib)  password yang dibagikan ke siswa
- *   ANTHROPIC_API_KEY   (untuk fitur AI)  kunci API dari console.anthropic.com
- *   AI_MODEL            (opsional) default: claude-haiku-5-5
+ *   GROQ_API_KEY   (untuk fitur AI)  kunci API Groq dari console.groq.com
+ *   AI_MODEL            (opsional) default: llama-3.3-70b-versatile
  * JANGAN menulis kunci/password di kode ini.
  *
  * Sheet yang dibuat otomatis:
@@ -28,7 +28,7 @@ const CHAT_HEADERS = ["Waktu", "Nama", "Kelas", "Halaman", "Tahap", "Pertanyaan"
 const MAX_GAGAL = 5;          // batas salah password
 const BLOKIR_DETIK = 300;     // diblokir sementara (5 menit)
 const CHAT_MAKS_PER_JAM = 30; // batas pertanyaan AI per siswa per jam
-const DEFAULT_AI_MODEL = "claude-haiku-5-5";
+const DEFAULT_AI_MODEL = "llama-3.3-70b-versatile";
 
 function doPost(e) {
   let data;
@@ -127,8 +127,8 @@ const SYSTEM_PROMPT = [
 
 function handleChat(d) {
   const props = PropertiesService.getScriptProperties();
-  const key = props.getProperty("ANTHROPIC_API_KEY");
-  if (!key) return json({ ok: false, error: "Fitur AI belum diaktifkan guru (Script properties > ANTHROPIC_API_KEY)." });
+  const key = props.getProperty("GROQ_API_KEY");
+  if (!key) return json({ ok: false, error: "Fitur AI belum diaktifkan guru (Script properties > GROQ_API_KEY)." });
 
   const pesan = String(d.pesan || "").trim().slice(0, 500);
   if (!pesan) return json({ ok: false, error: "Pertanyaan kosong." });
@@ -155,14 +155,14 @@ function handleChat(d) {
   const konteks = "Siswa sedang membuka halaman: " + String(d.halaman || "-").slice(0, 80) + (d.konteks ? " (bagian: " + String(d.konteks).slice(0, 60) + ")" : "") + ".";
   let jawaban = "";
   try {
-    const res = UrlFetchApp.fetch("https://api.anthropic.com/v1/messages", {
+    // Groq memakai format OpenAI: system prompt menjadi pesan pertama
+    const res = UrlFetchApp.fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "post", contentType: "application/json", muteHttpExceptions: true,
-      headers: { "x-api-key": key, "anthropic-version": "2023-06-01" },
+      headers: { "Authorization": "Bearer " + key },
       payload: JSON.stringify({
         model: props.getProperty("AI_MODEL") || DEFAULT_AI_MODEL,
         max_tokens: 700,
-        system: SYSTEM_PROMPT + "\n\n" + konteks,
-        messages: msgs
+        messages: [{ role: "system", content: SYSTEM_PROMPT + "\n\n" + konteks }].concat(msgs)
       })
     });
     const code = res.getResponseCode(), body = JSON.parse(res.getContentText() || "{}");
@@ -170,7 +170,7 @@ function handleChat(d) {
       Logger.log("AI error " + code + ": " + res.getContentText());
       return json({ ok: false, error: code === 429 ? "AI sedang sibuk. Coba lagi sebentar." : "AI belum bisa menjawab sekarang (kode " + code + "). Hubungi gurumu bila berulang." });
     }
-    jawaban = (body.content || []).filter(function (b) { return b.type === "text"; }).map(function (b) { return b.text; }).join("\n").trim();
+    jawaban = String(((body.choices || [])[0] || {}).message ? body.choices[0].message.content : "").trim();
   } catch (err) {
     Logger.log("AI exception: " + err);
     return json({ ok: false, error: "Tidak bisa menghubungi layanan AI. Coba lagi." });
@@ -271,8 +271,8 @@ function getOrCreateSheet(name, headers) {
 /** Jalankan manual sekali (Run) untuk mengecek konfigurasi. */
 function cekKonfigurasi() {
   const p = PropertiesService.getScriptProperties();
-  const pw = p.getProperty("PASSWORD"), ai = p.getProperty("ANTHROPIC_API_KEY");
+  const pw = p.getProperty("PASSWORD"), ai = p.getProperty("GROQ_API_KEY");
   Logger.log(pw ? "OK: PASSWORD sudah diatur (" + pw.length + " karakter)." : "BELUM: PASSWORD belum diatur di Script properties.");
-  Logger.log(ai ? "OK: ANTHROPIC_API_KEY sudah diatur. Model: " + (p.getProperty("AI_MODEL") || DEFAULT_AI_MODEL) : "BELUM: ANTHROPIC_API_KEY belum diatur (fitur AI nonaktif).");
+  Logger.log(ai ? "OK: GROQ_API_KEY sudah diatur. Model: " + (p.getProperty("AI_MODEL") || DEFAULT_AI_MODEL) : "BELUM: GROQ_API_KEY belum diatur (fitur AI nonaktif).");
   Logger.log("Zona waktu script: " + Session.getScriptTimeZone() + " (ubah di Project Settings bila bukan WIB / Asia/Jakarta).");
 }
