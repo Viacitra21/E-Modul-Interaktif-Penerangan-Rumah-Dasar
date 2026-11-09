@@ -17,7 +17,7 @@ function configured() { return SHEET_WEBAPP_URL && !SHEET_WEBAPP_URL.startsWith(
 
 async function apiPost(payload) {
   const res = await fetch(SHEET_WEBAPP_URL, {
-    method: 'POST',
+    method: 'POST', keepalive: true,        // tetap terkirim walau halaman langsung berpindah
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(payload)
   });
@@ -91,26 +91,86 @@ function ensureLogin() {
   });
 }
 
-// Catat satu aktivitas ke Google Sheets (butuh token hasil login)
-function logEvent(aktivitas, detail = '', skor = '') {
+/* ---------- antrean offline: aktivitas tidak hilang bila sinyal HP putus ---------- */
+const QUEUE_KEY = 'emodul_queue';
+function queueGet() { try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch (e) { return []; } }
+function queueSet(q) { try { localStorage.setItem(QUEUE_KEY, JSON.stringify(q.slice(-300))); } catch (e) {} }
+function queuePush(p) { const q = queueGet(); q.push(p); queueSet(q); }
+let flushing = false;
+async function flushQueue() {
+  if (flushing) return;
+  const s = getSession(); if (!s || !s.token || !configured()) return;
+  flushing = true;
+  try {
+    let q = queueGet();
+    while (q.length) {
+      const p = q[0];
+      if (p.nama !== s.nama || p.kelas !== s.kelas) { q.shift(); queueSet(q); continue; }   // milik siswa lain
+      p.token = s.token;
+      const r = await apiPost(p);
+      if (r && r.error === 'unauthorized') { q = []; queueSet(q); break; }
+      q.shift(); queueSet(q);
+    }
+  } catch (e) { /* masih offline, coba lagi nanti */ }
+  flushing = false;
+}
+window.addEventListener('online', flushQueue);
+
+function buildPayload(aktivitas, detail, skor) {
   const s = getSession();
-  if (!s || !s.token || !configured()) return;
-  const payload = {
+  return {
     action: 'log',
-    waktu: new Date().toISOString(),
+    waktu: new Date().toISOString(),                 // jam perangkat saat kejadian (server menambah jam server)
     nama: s.nama, kelas: s.kelas, token: s.token,
     halaman: document.title,
     tahap: (typeof PAGE_TAHAP !== 'undefined') ? PAGE_TAHAP : '',
     aktivitas, detail, skor
   };
+}
+
+// Catat satu aktivitas ke Google Sheets (butuh token hasil login)
+function logEvent(aktivitas, detail = '', skor = '') {
+  const s = getSession();
+  if (!s || !s.token || !configured()) return;
+  const payload = buildPayload(aktivitas, detail, skor);
   apiPost(payload).then(r => {
     if (r && r.error === 'unauthorized') {          // password diganti guru → login ulang
       sessionStorage.removeItem(SESSION_KEY);
       alert('Sesi login berakhir. Silakan masuk kembali.');
       location.reload();
     }
-  }).catch(() => {});
+  }).catch(() => { queuePush(payload); });          // gagal kirim → simpan dulu, kirim ulang nanti
 }
+
+// Dipakai saat halaman ditutup/disembunyikan (fetch biasa bisa terpotong)
+function logEventBeacon(aktivitas, detail = '', skor = '') {
+  const s = getSession();
+  if (!s || !s.token || !configured()) return;
+  const payload = buildPayload(aktivitas, detail, skor);
+  let ok = false;
+  try { ok = navigator.sendBeacon(SHEET_WEBAPP_URL, new Blob([JSON.stringify(payload)], { type: 'text/plain;charset=UTF-8' })); } catch (e) {}
+  if (!ok) queuePush(payload);
+}
+
+/* ---------- durasi aktif di setiap halaman ---------- */
+let activeSince = document.hidden ? null : Date.now(), activeMs = 0;
+function pauseActive() { if (activeSince) { activeMs += Date.now() - activeSince; activeSince = null; } }
+function reportDuration() {
+  pauseActive();
+  const sec = Math.round(activeMs / 1000); activeMs = 0;
+  if (sec >= 2) logEventBeacon('Durasi Halaman', sec + ' detik');
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) reportDuration(); else activeSince = Date.now();
+});
+window.addEventListener('pagehide', reportDuration);
+
+// Pindah tab/bagian di halaman (Materi: Dasar, Komponen, Simulasi, dst.). Jobsheet punya log sendiri.
+document.addEventListener('tabchange', e => {
+  if (typeof PAGE_TAHAP !== 'undefined' && PAGE_TAHAP === 'Jobsheet') return;
+  const btn = document.querySelector(`.tab-btn[data-tab="${e.detail}"]`);
+  logEvent('Buka Bagian', btn ? btn.textContent.trim() : e.detail);
+});
 
 function renderUserChip() {
   const s = getSession();
@@ -129,6 +189,16 @@ function renderUserChip() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   await ensureLogin();
+  document.dispatchEvent(new Event('emodul:login'));   // memberi tahu chat.js dll bahwa siswa sudah masuk
   renderUserChip();
+  // waktu pertama kali siswa mulai mengakses e-modul pada sesi ini
+  try {
+    if (!sessionStorage.getItem('emodul_mulai')) {
+      sessionStorage.setItem('emodul_mulai', new Date().toISOString());
+      const dev = (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'HP/tablet' : 'Komputer') + ' ' + window.innerWidth + 'x' + window.innerHeight;
+      logEvent('Mulai Sesi Belajar', dev);
+    }
+  } catch (e) {}
   logEvent('Akses Halaman');
+  flushQueue();
 });

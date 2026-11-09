@@ -1,3 +1,21 @@
+# Revisi Kedua: Petunjuk Alur, Asisten AI, Pencatatan Aktivitas, Wiring/Simulasi Mobile
+
+| # | Revisi | Di mana |
+|---|---|---|
+| 1 | Bilah **Langkah 1-5** di setiap halaman + instruksi "setelah ini apa", petunjuk lengkap di `petunjuk.html`, tab Materi bertanda ✓, tombol **Lanjut ke Evaluasi** di bawah halaman Praktik (muncul menyorot setelah pengujian berhasil), petunjuk sebelum Evaluasi | `js/guide.js`, `petunjuk.html`, `materi.html`, `jobsheet.html`, `latihan.html`, `evaluasi.html` |
+| 2 | **Asisten AI** (tombol 🤖 pojok kanan bawah: Tanya AI, Riwayat, Aktivitas) | `js/chat.js`, `apps-script/Code.gs` |
+| 3 | **Pencatatan aktivitas**: waktu mulai sesi, durasi tiap halaman, buka tiap bagian, praktikum, per soal & durasi latihan/evaluasi, interaksi AI; antrean offline; jam perangkat + jam server | `js/tracking.js`, `js/quiz.js`, `apps-script/Code.gs` |
+| 4 | **Zoom + geser + area sentuh besar** pada Trainer Virtual dan Diagram | `js/zoompan.js`, `js/simulator.js`, `js/diagram.js`, `css/extra.css` |
+| 5 | **4 Contoh Rangkaian** pre-built (saklar tunggal, 2 lampu paralel, 2 saklar terpisah, saklar tukar) | `js/sim-presets.js`, `js/sim-engine.js`, `js/simulator.js` |
+
+## Langkah memasang
+1. Salin semua file hasil revisi ke proyek (jangan hapus `assets/` dan `js/config.js` milikmu).
+2. **WAJIB untuk fitur AI & pencatatan baru**: ikuti bagian *Mengaktifkan Asisten AI* di `apps-script/README.md` (tempel `Code.gs` baru, isi `ANTHROPIC_API_KEY`, deploy **New version**). Sebelum ini dilakukan, e-modul tetap berjalan normal, hanya AI yang menampilkan pesan "belum diaktifkan".
+3. Uji di HP: login, buka Materi > Simulasi > Contoh Rangkaian, coba cubit/geser, ketuk terminal, buka 🤖.
+4. `git add . ; git commit ; git push`. Semua file memakai `?v=2` agar browser siswa memuat versi baru.
+
+---
+
 # Panduan Memasang Update (Revisi Oktober 2026)
 
 ## Yang berubah

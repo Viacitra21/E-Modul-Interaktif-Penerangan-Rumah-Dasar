@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Evaluasi — E-Modul TITL</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/extra.css">
+<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/extra.css?v=2">
 </head>
 <body>
 
@@ -33,6 +33,15 @@
         <span class="eyebrow-tag">Evaluasi Akhir · mengukur pemahaman</span>
         <h2>Evaluasi Penerangan Rumah Dasar</h2>
         <p>10 soal berbeda dari Latihan, tetap bertingkat C1–C6. Tidak ada petunjuk dan jawaban benar/salah tidak ditampilkan per soal; hasil lengkap per level kognitif dan per indikator muncul di akhir.</p>
+        <div class="pre-eval">
+          <b>Sebelum mulai, baca dulu:</b>
+          <ul>
+            <li>Kerjakan <b>sendiri</b>. Tidak ada petunjuk, dan benar/salah baru terlihat di akhir.</li>
+            <li>Pilih satu jawaban lalu tekan tombol <b>Lanjut</b>. Soal yang sudah dilewati tidak bisa diulang.</li>
+            <li>Waktu mulai dan selesai dicatat untuk guru. Siapkan koneksi internet yang stabil.</li>
+            <li>Setelah soal terakhir, skor dan analisis per level (C1–C6) muncul otomatis. Gunakan untuk memilih bagian yang perlu diulang.</li>
+          </ul>
+        </div>
         <button class="btn btn-primary" id="startEvalBtn">Mulai Evaluasi (10 soal)</button>
       </div>
       <div id="quizRoot" style="display:none;"></div>
@@ -45,11 +54,13 @@
 </footer>
 
 <script>const PAGE_TAHAP = 'Evaluasi';</script>
-<script src="js/config.js"></script>
-<script src="js/main.js"></script>
-<script src="js/sound.js"></script>
-<script src="js/tracking.js"></script>
-<script src="js/quiz.js"></script>
+<script src="js/config.js?v=2"></script>
+<script src="js/main.js?v=2"></script>
+<script src="js/sound.js?v=2"></script>
+<script src="js/tracking.js?v=2"></script>
+<script src="js/guide.js?v=2"></script>
+<script src="js/chat.js?v=2"></script>
+<script src="js/quiz.js?v=2"></script>
 <script>
 document.getElementById('startEvalBtn').addEventListener('click',()=>{document.getElementById('introBox').style.display='none';document.getElementById('quizRoot').style.display='block';startQuiz({
   root: 'quizRoot', mode: 'assessment', title: 'Hasil Evaluasi Akhir', passPct: 75,

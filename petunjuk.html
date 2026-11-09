@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Petunjuk & Tujuan — E-Modul TITL</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/extra.css">
+<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/extra.css?v=2">
 </head>
 <body>
 
@@ -32,14 +32,46 @@
       <div class="section-head">
         <span class="eyebrow-tag">Mulai di sini</span>
         <h2>Cara menggunakan e-modul</h2>
-        <p>Lima langkah ini akan memandu perjalanan belajarmu, dari membaca materi sampai evaluasi akhir.</p>
+        <p>Lima langkah ini memandu perjalanan belajarmu dari membaca materi sampai evaluasi akhir. Ikuti urutannya dari atas ke bawah. Di setiap halaman ada bilah <strong>Langkah 1–5</strong> di bawah menu yang menunjukkan posisimu dan apa yang harus dilakukan.</p>
       </div>
       <div class="rail">
-        <div class="rail-step" data-n="1"><h3>Pelajari materi</h3><p>Baca materi dan amati ilustrasi rangkaian pada halaman Materi.</p></div>
-        <div class="rail-step" data-n="2"><h3>Coba latihan</h3><p>Jawab pertanyaan singkat untuk mengetahui pemahamanmu.</p></div>
-        <div class="rail-step" data-n="3"><h3>Pelajari jobsheet</h3><p>Ikuti langkah kerja praktik secara sistematis.</p></div>
-        <div class="rail-step" data-n="4"><h3>Lakukan praktik</h3><p>Gunakan trainer yang tersedia di Laboratorium TITL.</p></div>
-        <div class="rail-step" data-n="5"><h3>Evaluasi</h3><p>Kerjakan evaluasi untuk mengetahui hasil belajarmu.</p></div>
+        <div class="rail-step" data-n="1"><h3>Pelajari materi</h3><p>Baca materi dan amati ilustrasi rangkaian pada halaman Materi.</p>
+          <div class="step-extra">
+            <span><b>Yang kamu lakukan:</b> buka keenam tab satu per satu (Dasar, Komponen, Simbol, Pahami Rangkaian, Simulasi, Video). Tab yang sudah dibuka diberi tanda ✓.</span>
+            <span><b>Setelah selesai:</b> tekan tombol <b>Lanjut ke Latihan</b> di bagian bawah halaman Materi.</span>
+            <a href="materi.html">Buka Materi →</a>
+          </div></div>
+        <div class="rail-step" data-n="2"><h3>Coba latihan</h3><p>Jawab pertanyaan singkat untuk mengetahui pemahamanmu.</p>
+          <div class="step-extra">
+            <span><b>Yang kamu lakukan:</b> jawab 10 soal. Boleh memakai tombol petunjuk, dan setiap soal punya penjelasan.</span>
+            <span><b>Setelah selesai:</b> lihat skormu, lalu tekan <b>Lanjut ke Jobsheet</b>. Skor rendah? Ulangi Materi atau tanyakan ke Asisten AI.</span>
+            <a href="latihan.html">Buka Latihan →</a>
+          </div></div>
+        <div class="rail-step" data-n="3"><h3>Pelajari jobsheet</h3><p>Ikuti langkah kerja praktik secara sistematis.</p>
+          <div class="step-extra">
+            <span><b>Yang kamu lakukan:</b> baca <b>Jobsheet 1</b> (simulasi Proteus). Boleh berlatih dulu di <b>Trainer Virtual</b> pada Materi → Simulasi.</span>
+            <span><b>Setelah selesai:</b> pindah ke tab <b>Jobsheet 2</b> (praktikum trainer) dan baca sampai tuntas sebelum menyentuh alat.</span>
+            <a href="jobsheet.html">Buka Jobsheet →</a>
+          </div></div>
+        <div class="rail-step" data-n="4"><h3>Lakukan praktik</h3><p>Gunakan trainer yang tersedia di Laboratorium TITL.</p>
+          <div class="step-extra">
+            <span><b>Yang kamu lakukan:</b> rakit di trainer bersama guru, centang <b>Periksa Rangkaian</b> sampai lengkap, lalu lakukan pengujian.</span>
+            <span><b>Setelah selesai:</b> tombol <b>Lanjut ke Evaluasi</b> ada di bagian paling bawah halaman Praktik.</span>
+          </div></div>
+        <div class="rail-step" data-n="5"><h3>Evaluasi</h3><p>Kerjakan evaluasi untuk mengetahui hasil belajarmu.</p>
+          <div class="step-extra">
+            <span><b>Yang kamu lakukan:</b> baca petunjuk di halaman Evaluasi, tekan <b>Mulai Evaluasi</b>, kerjakan 10 soal sendiri tanpa petunjuk.</span>
+            <span><b>Setelah selesai:</b> hasil per level kognitif muncul di akhir. Lihat bagian yang masih lemah lalu ulangi Materi bila perlu.</span>
+            <a href="evaluasi.html">Buka Evaluasi →</a>
+          </div></div>
+      </div>
+      <div class="info-card" style="margin-top:34px;">
+        <h3>Fitur bantu yang bisa kamu pakai kapan saja</h3>
+        <ul style="padding-left:22px;line-height:1.7;margin:8px 0 0;">
+          <li><b>🤖 Tanya AI</b> (tombol pink di pojok kanan bawah): tanyakan materi yang belum paham. Tab <b>Riwayat</b> menyimpan pertanyaan sebelumnya, tab <b>Aktivitas</b> menampilkan jejak belajarmu.</li>
+          <li><b>＋ / － / ⤢</b> pada diagram dan trainer virtual: perbesar, perkecil, dan pas-kan gambar. Di HP kamu juga bisa mencubit layar dan menggeser.</li>
+          <li><b>Contoh Rangkaian</b> (Materi → Simulasi): 4 rangkaian siap pakai untuk dicoba dan dipelajari.</li>
+        </ul>
       </div>
     </div>
   </section>
@@ -72,9 +104,11 @@
 </footer>
 
 <script>const PAGE_TAHAP = 'Petunjuk';</script>
-<script src="js/config.js"></script>
-<script src="js/main.js"></script>
-<script src="js/sound.js"></script>
-<script src="js/tracking.js"></script>
+<script src="js/config.js?v=2"></script>
+<script src="js/main.js?v=2"></script>
+<script src="js/sound.js?v=2"></script>
+<script src="js/tracking.js?v=2"></script>
+<script src="js/guide.js?v=2"></script>
+<script src="js/chat.js?v=2"></script>
 </body>
 </html>

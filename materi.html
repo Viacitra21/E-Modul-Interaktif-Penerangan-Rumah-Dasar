@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Materi — E-Modul TITL</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/extra.css">
+<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/extra.css?v=2">
 </head>
 <body>
 
@@ -105,13 +105,13 @@
 
       <!-- TAB 4: RANGKAIAN -->
       <div class="tab-panel" id="tab-rangkaian">
-        <p class="muted" style="margin-bottom:18px;">Diagram ini bisa "berbicara": dengarkan penjelasan narator, ikuti arus yang bergerak, atau klik tiap komponen untuk mendengar bagiannya saja.</p>
+        <p class="muted" style="margin-bottom:18px;">Diagram ini bisa "berbicara": dengarkan penjelasan narator, ikuti arus yang bergerak, atau klik tiap komponen untuk mendengar bagiannya saja. Gunakan tombol <b>＋ / －</b> di pojok diagram (atau cubit layar di HP) untuk memperbesar.</p>
         <div id="diagRoot"></div>
       </div>
 
       <!-- TAB 5: SIMULASI -->
       <div class="tab-panel" id="tab-simulasi">
-        <p class="muted" style="margin-bottom:18px;">Rangkai sendiri di trainer virtual: pasang kabel, nyalakan MCB dan saklar, lalu lihat hasilnya. Coba juga kesalahan yang berbahaya (misalnya hubung singkat) agar paham mengapa K3 penting.</p>
+        <p class="muted" style="margin-bottom:18px;">Ada dua cara belajar di trainer virtual. <b>🧩 Rakit Sendiri</b>: pasang kabel sendiri, nyalakan MCB dan saklar, lalu lihat hasilnya. <b>📚 Contoh Rangkaian</b>: pilih salah satu dari 4 rangkaian yang sudah terpasang, selesaikan percobaannya, dan pelajari hubungan antar-komponen. Coba juga kesalahan yang berbahaya (misalnya hubung singkat) agar paham mengapa K3 penting.</p>
         <div id="simRoot"></div>
       </div>
 
@@ -129,8 +129,18 @@
         </div>
       </div>
 
-      <div class="btn-row" style="margin-top:32px;">
-        <a href="latihan.html" class="btn btn-primary">Lanjut ke Latihan</a>
+      <div class="next-card" id="nextCard">
+        <span class="eyebrow">Langkah berikutnya</span>
+        <h3>Sudah selesai membaca materi?</h3>
+        <p id="tabProgress">0 dari 6 bagian sudah dibuka</p>
+        <ul>
+          <li>Pastikan keenam tab di atas sudah kamu buka (tanda ✓ muncul di tab yang sudah dibuka).</li>
+          <li>Belum paham? Tekan tombol <b>🤖 Tanya AI</b> di pojok kanan bawah.</li>
+          <li>Sudah paham? Lanjut mengerjakan <b>10 soal Latihan</b> untuk menguji pemahamanmu.</li>
+        </ul>
+        <div class="btn-row">
+          <a href="latihan.html" class="btn btn-pink" data-act="Materi Selesai - Lanjut Latihan">Lanjut ke Latihan →</a>
+        </div>
       </div>
     </div>
   </section>
@@ -155,13 +165,17 @@
 </div>
 
 <script>const PAGE_TAHAP = 'Materi';</script>
-<script src="js/config.js"></script>
-<script src="js/main.js"></script>
-<script src="js/sound.js"></script>
-<script src="js/tracking.js"></script>
-<script src="js/sim-engine.js"></script>
-<script src="js/simulator.js"></script>
-<script src="js/diagram.js"></script>
+<script src="js/config.js?v=2"></script>
+<script src="js/main.js?v=2"></script>
+<script src="js/sound.js?v=2"></script>
+<script src="js/tracking.js?v=2"></script>
+<script src="js/guide.js?v=2"></script>
+<script src="js/chat.js?v=2"></script>
+<script src="js/zoompan.js?v=2"></script>
+<script src="js/sim-engine.js?v=2"></script>
+<script src="js/sim-presets.js?v=2"></script>
+<script src="js/simulator.js?v=2"></script>
+<script src="js/diagram.js?v=2"></script>
 <script>
 initTabs('.tabs');
 
@@ -229,6 +243,7 @@ const hashMap = { '#dasar': 'tab-dasar', '#komponen': 'tab-komponen', '#simbol':
 if (hashMap[location.hash]) document.querySelector(`.tab-btn[data-tab="${hashMap[location.hash]}"]`).click();
 // Hentikan narator saat pindah tab
 document.addEventListener('tabchange', () => Diagram.stop());
+document.querySelectorAll('[data-act]').forEach(a => a.addEventListener('click', () => logEvent(a.dataset.act)));
 </script>
 </body>
 </html>

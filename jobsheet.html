@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jobsheet — E-Modul TITL</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/extra.css">
+<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/extra.css?v=2">
 </head>
 <body>
 
@@ -132,6 +132,26 @@
       </div>
     </div>
   </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="wrap">
+      <div class="next-card" id="afterPraktik">
+        <span class="eyebrow">Langkah berikutnya · setelah praktikum selesai</span>
+        <h3>Praktikum sudah selesai? Lanjut ke tahap evaluasi</h3>
+        <p>Pastikan dulu:</p>
+        <ul>
+          <li>Jobsheet 1 (simulasi) dan Jobsheet 2 (trainer) sudah kamu kerjakan.</li>
+          <li>Semua poin <b>Periksa Rangkaian</b> sudah dicentang dan <b>Pengujian</b> sudah dijawab.</li>
+          <li>Alat sudah dirapikan, MCB dalam keadaan <b>OFF</b>, dan kamu sudah melapor ke guru.</li>
+        </ul>
+        <p>Di tahap berikutnya kamu akan mengerjakan <b>10 soal Evaluasi</b> sendiri (tanpa petunjuk) untuk mengukur hasil belajarmu. Waktu pengerjaan dicatat.</p>
+        <div class="btn-row">
+          <a href="evaluasi.html" class="btn btn-pink" data-act="Praktikum Selesai - Lanjut Evaluasi" id="toEval">Lanjut ke Evaluasi →</a>
+          <a href="latihan.html" class="btn btn-ghost" data-act="Praktikum Selesai - Latihan Soal">Latihan soal dulu</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer">
@@ -139,10 +159,12 @@
 </footer>
 
 <script>const PAGE_TAHAP = 'Jobsheet';</script>
-<script src="js/config.js"></script>
-<script src="js/main.js"></script>
-<script src="js/sound.js"></script>
-<script src="js/tracking.js"></script>
+<script src="js/config.js?v=2"></script>
+<script src="js/main.js?v=2"></script>
+<script src="js/sound.js?v=2"></script>
+<script src="js/tracking.js?v=2"></script>
+<script src="js/guide.js?v=2"></script>
+<script src="js/chat.js?v=2"></script>
 <script>
 initTabs('.tabs');
 document.addEventListener('tabchange', e => { logEvent(e.detail === 'tab-js1' ? 'Buka Jobsheet 1 (Proteus)' : 'Buka Jobsheet 2 (Trainer)'); });
@@ -173,6 +195,7 @@ checkItems.forEach(item => {
   item.addEventListener('click', e => {
     if (e.target !== cb) cb.checked = !cb.checked;
     item.classList.toggle('checked', cb.checked);
+    logEvent(cb.checked ? 'Praktikum: Centang Pemeriksaan' : 'Praktikum: Batal Centang', item.textContent.trim());
     document.getElementById('checkedBtn').disabled = ![...checkItems].every(i => i.querySelector('input').checked);
   });
 });
@@ -195,6 +218,10 @@ document.querySelectorAll('#ujiOptions .quiz-opt').forEach(btn => {
       document.getElementById('troubleSection').style.display = 'none';
       sfx.success();
       logEvent('Selesai Jobsheet 2 (Trainer)', 'Pengujian berhasil, lampu menyala');
+      const nc = document.getElementById('afterPraktik');
+      fb.textContent += ' Praktikum selesai! Tombol "Lanjut ke Evaluasi" ada di bagian paling bawah halaman.';
+      nc.classList.remove('pulse'); void nc.offsetWidth; nc.classList.add('pulse');
+      setTimeout(() => nc.scrollIntoView({ behavior: 'smooth', block: 'center' }), 600);
     } else {
       btn.classList.add('wrong'); sfx.wrong();
       fb.textContent = 'Hasil ini menandakan ada masalah pada rangkaian. Lihat panduan troubleshooting di bawah.';

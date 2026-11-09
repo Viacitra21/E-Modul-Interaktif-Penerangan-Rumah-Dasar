@@ -1,6 +1,8 @@
 # E-Modul Interaktif TITL — Praktik Penerangan Rumah Dasar
 
-> **Update terbaru: lihat `PANDUAN_UPDATE.md`** (login password, simulasi trainer virtual, diagram bersuara, soal C1-C6, jobsheet PDF).
+> **Revisi ke-2 (alur belajar, Asisten AI, pencatatan aktivitas, zoom & 4 contoh rangkaian): lihat bagian atas `PANDUAN_UPDATE.md`.**
+>
+> **Update sebelumnya: `PANDUAN_UPDATE.md`** (login password, simulasi trainer virtual, diagram bersuara, soal C1-C6, jobsheet PDF).
 
 
 Website statis (HTML, CSS, JavaScript murni — tanpa build tools) sesuai rancangan struktur web e-modul.
@@ -24,7 +26,13 @@ emodul-titl/
 ├── css/style.css        → Semua styling (tema baby pink + indigo, mobile-friendly, animasi)
 ├── js/main.js           → Navigasi mobile, modal, tab, dan animasi scroll-reveal
 ├── js/sound.js          → Efek suara klik/benar/salah (sintesis, tanpa file audio) + tombol mute
-├── js/tracking.js       → Login siswa (nama & kelas) + pencatatan aktivitas ke Google Sheets
+├── js/tracking.js       → Login siswa (nama & kelas) + pencatatan aktivitas ke Google Sheets (durasi halaman, antrean offline)
+├── js/guide.js          → Bilah alur belajar 5 langkah di setiap halaman
+├── js/chat.js           → Asisten AI (chat, riwayat, aktivitas saya)
+├── js/zoompan.js        → Zoom/geser gambar SVG (trainer virtual & diagram)
+├── js/sim-engine.js     → Logika rangkaian trainer virtual
+├── js/sim-presets.js    → 4 contoh rangkaian pre-built
+├── js/simulator.js      → Tampilan trainer virtual (Rakit Sendiri + Contoh Rangkaian)
 ├── assets/video/        → Taruh video praktikmu di sini (lihat README di folder ini)
 ├── assets/img/          → Taruh foto asli komponen/trainer di sini kalau ingin ganti ilustrasi SVG
 └── apps-script/

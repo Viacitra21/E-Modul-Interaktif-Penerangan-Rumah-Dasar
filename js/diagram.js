@@ -61,7 +61,7 @@ const Diagram = (() => {
     }
   };
 
-  let root, cid = 'satu', cur = -1, playing = false, runToken = 0, flowStop = null, voice = null, rate = 1;
+  let root, zp, cid = 'satu', cur = -1, playing = false, runToken = 0, flowStop = null, voice = null, rate = 1;
   const audioExists = {};
 
   /* ---------- suara ---------- */
@@ -125,11 +125,15 @@ const Diagram = (() => {
   function svgEl(n, a = {}, p) { const e = document.createElementNS(NS, n); Object.entries(a).forEach(([k, v]) => e.setAttribute(k, v)); if (p) p.appendChild(e); return e; }
   function drawCircuit() {
     const C = CIRCUITS[cid], svg = root.querySelector('#diagSvg');
-    svg.setAttribute('viewBox', C.vb); svg.innerHTML = '';
+    svg.innerHTML = '';
+    { const [, , vw, vh] = C.vb.split(' ').map(Number); zp.setBase(vw, vh); }
     Object.entries(C.wires).forEach(([id, d]) => { const p = svgEl('path', { d, class: 'dg-wire', id: 'dw-' + id }, svg); });
     C.labels.forEach(l => { const t = svgEl('text', { x: l.x, y: l.y, class: 'dg-label', id: 'dl-' + l.id }, svg); t.textContent = l.t; });
     C.comps.forEach((c, i) => {
       const g = svgEl('g', { class: 'dg-comp', id: 'dc-' + c.id, tabindex: 0, role: 'button', 'aria-label': c.t }, svg);
+      // area sentuh transparan yang lebih besar dari gambar komponen (mudah diketuk jari)
+      if (c.type === 'lamp') svgEl('circle', { cx: c.cx, cy: c.cy, r: c.r + 12, fill: 'transparent', class: 'dg-hit' }, g);
+      else svgEl('rect', { x: c.x - 10, y: c.y - 10, width: c.w + 20, height: c.h + 20, rx: 12, fill: 'transparent', class: 'dg-hit' }, g);
       if (c.type === 'lamp') {
         svgEl('circle', { cx: c.cx, cy: c.cy, r: c.r + 14, class: 'dg-glow', id: 'dgl-' + c.id }, g);
         svgEl('circle', { cx: c.cx, cy: c.cy, r: c.r, class: 'body' }, g);
@@ -138,7 +142,7 @@ const Diagram = (() => {
         svgEl('rect', { x: c.x, y: c.y, width: c.w, height: c.h, rx: 8 }, g);
         const t = svgEl('text', { x: c.x + c.w / 2, y: c.y + c.h / 2 + 4 }, g); t.textContent = c.t;
       }
-      const act = () => { if (playing) stop(); const idx = C.steps.findIndex(s => s.focus.includes(c.id)); if (idx >= 0) { showStep(idx); runOnce(idx); } };
+      const act = () => { if (zp.wasDrag()) return; if (playing) stop(); const idx = C.steps.findIndex(s => s.focus.includes(c.id)); if (idx >= 0) { showStep(idx); runOnce(idx); } };
       g.addEventListener('click', act); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); } });
     });
     const dots = svgEl('g', { id: 'dgDots' }, svg);
@@ -231,6 +235,8 @@ const Diagram = (() => {
           <div class="narr-note" id="voiceNote"></div>
         </div>
       </div>`;
+    zp = ZoomPan.attach(root.querySelector('#diagSvg'));
+    root.querySelector('.circuit-svg-wrap').insertAdjacentElement('afterbegin', zp.toolbar());
     root.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => { sfx.tab(); setCircuit(b.dataset.c); }));
     root.querySelector('#narrPlay').addEventListener('click', () => { if (playing) { stop(); sfx.close(); } else runFrom(0); });
     root.querySelector('#narrRate').addEventListener('change', e => { rate = parseFloat(e.target.value); });

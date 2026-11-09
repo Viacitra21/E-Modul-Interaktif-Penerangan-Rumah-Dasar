@@ -26,6 +26,10 @@ function startQuiz(cfg) {
   const practice = cfg.mode === 'practice';
   const Q = cfg.questions.map(q => ({ ...q }));
   let idx = 0, results = [], answered = false, current = null;
+  const t0 = Date.now(), nm = practice ? 'Latihan' : 'Evaluasi';
+  // catat waktu mulai (menunggu login selesai bila halaman baru dibuka)
+  const logStart = () => logEvent('Mulai ' + nm, Q.length + ' soal');
+  if (typeof getSession === 'function' && getSession()) logStart(); else document.addEventListener('emodul:login', logStart, { once: true });
 
   function chip(level) {
     const b = BLOOM[level];
@@ -154,6 +158,8 @@ function startQuiz(cfg) {
 
   function advance() {
     if (!practice) results[idx] = { ok: current === true, level: Q[idx].level, cat: Q[idx].cat };
+    // jejak per soal (waktu tercatat otomatis). Evaluasi: tanpa hasil benar/salah.
+    logEvent('Jawab ' + nm, `Soal ${idx + 1} dari ${Q.length}` + (practice ? (results[idx] && results[idx].ok ? ' (benar)' : ' (salah)') : ''));
     idx++;
     idx >= Q.length ? showResult() : render();
   }
@@ -192,7 +198,9 @@ function startQuiz(cfg) {
       </div>`;
     const detail = practice ? `Benar ${total} dari ${Q.length} soal`
       : lv.map(l => `${BLOOM[l.lvl].kode}: ${l.pct}%`).join(', ') + ' | ' + ct.map(c => `${c.label}: ${c.pct}%`).join(', ');
+    const durasi = Math.round((Date.now() - t0) / 1000);
     logEvent(cfg.logName, detail, practice ? total : pct);
+    logEvent('Durasi ' + nm, durasi + ' detik');
   }
 
   render();

@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Latihan — E-Modul TITL</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/extra.css">
+<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/extra.css?v=2">
 </head>
 <body>
 
@@ -35,6 +35,15 @@
         <p>10 soal bertingkat dari C1 (mengingat) sampai C6 (mencipta). Ada petunjuk opsional dan penjelasan di setiap soal, jadi salah pun tidak masalah, yang penting kamu paham alasannya.</p>
       </div>
       <div id="quizRoot"></div>
+      <div class="next-card">
+        <span class="eyebrow">Langkah berikutnya</span>
+        <h3>Setelah 10 soal selesai</h3>
+        <ul>
+          <li>Lihat skor dan penjelasan di halaman hasil.</li>
+          <li>Skor <b>70% ke atas</b>: tekan <b>Lanjut ke Jobsheet</b> untuk mulai persiapan praktik.</li>
+          <li>Skor di bawah 70%: buka lagi <a href="materi.html" style="text-decoration:underline;">Materi</a> bagian yang lemah atau tanya <b>🤖 AI</b>, lalu tekan <b>Ulangi</b>.</li>
+        </ul>
+      </div>
     </div>
   </section>
 </main>
@@ -44,11 +53,13 @@
 </footer>
 
 <script>const PAGE_TAHAP = 'Latihan';</script>
-<script src="js/config.js"></script>
-<script src="js/main.js"></script>
-<script src="js/sound.js"></script>
-<script src="js/tracking.js"></script>
-<script src="js/quiz.js"></script>
+<script src="js/config.js?v=2"></script>
+<script src="js/main.js?v=2"></script>
+<script src="js/sound.js?v=2"></script>
+<script src="js/tracking.js?v=2"></script>
+<script src="js/guide.js?v=2"></script>
+<script src="js/chat.js?v=2"></script>
+<script src="js/quiz.js?v=2"></script>
 <script>
 const SYM_LAMPU = '<circle cx="20" cy="20" r="12" fill="none" stroke="#2E2A5E" stroke-width="2"/><line x1="11.5" y1="11.5" x2="28.5" y2="28.5" stroke="#2E2A5E" stroke-width="2"/><line x1="28.5" y1="11.5" x2="11.5" y2="28.5" stroke="#2E2A5E" stroke-width="2"/>';
 startQuiz({

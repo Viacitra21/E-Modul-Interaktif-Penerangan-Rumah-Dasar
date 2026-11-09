@@ -33,15 +33,29 @@
 
 ## Sudah pernah setup versi lama?
 - Tempel ulang `Code.gs` yang baru, atur `PASSWORD` (langkah 3), lalu **Deploy > Manage deployments > pensil > Version: New version > Deploy**. URL tetap sama.
-- Kolom baru **Evaluasi** otomatis ditambahkan di tab Rekap.
+- Kolom baru (Evaluasi, Mulai Akses, Praktikum, Tanya AI, Total Waktu, Durasi Evaluasi) dan kolom *Waktu Server* di tab Log otomatis ditambahkan.
 - Pindahkan URL lama dari `tracking.js` ke `js/config.js`.
+
+## Mengaktifkan Asisten AI (revisi 2)
+1. Buat kunci API di https://console.anthropic.com (menu *API keys*). Pasang batas pengeluaran bulanan di akun itu.
+2. Di Apps Script: *Project Settings* > *Script properties* > tambahkan:
+   - `ANTHROPIC_API_KEY` = kunci tadi (JANGAN ditulis di kode / GitHub)
+   - (opsional) `AI_MODEL` = nama model; bila kosong dipakai `claude-haiku-5-5`
+3. Tempel `Code.gs` terbaru, lalu **Deploy > Manage deployments > pensil > Version: New version > Deploy** (URL tetap sama).
+   Saat pertama kali, Google meminta izin baru (*Connect to an external service*), izinkan.
+4. Jalankan `cekKonfigurasi` untuk memastikan PASSWORD dan kunci AI terbaca.
+5. Pastikan **zona waktu** script benar: *Project Settings* > *Time zone* = `(GMT+07:00) Jakarta`.
+Tanpa langkah ini, seluruh e-modul tetap jalan; hanya tombol Tanya AI yang menampilkan pesan "belum diaktifkan".
+Tiap siswa dibatasi 30 pertanyaan per jam; pertanyaan maksimal 500 karakter.
 
 ## Mengganti password
 Ubah nilai `PASSWORD` di Script properties. Semua sesi lama otomatis tidak berlaku, siswa diminta login ulang dengan password baru.
 
 ## Isi Sheet
-**Tab Rekap** (satu baris per siswa): `Nama | Kelas | Petunjuk | Materi | Latihan | Jobsheet | Skor | Progres | Terakhir | Evaluasi`
-**Tab Log** (catatan mentah): Login, Login GAGAL, Akses Halaman, Selesai Latihan (skor/10), Selesai Evaluasi (skor + capaian C1-C6 + indikator), Simulasi Level 1/2 Berhasil (+ pelanggaran K3), Buka/Unduh Jobsheet, Checklist, Logout.
+**Tab Rekap** (satu baris per siswa): `Nama | Kelas | Petunjuk | Materi | Latihan | Jobsheet | Skor | Progres | Terakhir | Evaluasi | Mulai Akses | Praktikum | Tanya AI | Total Waktu (menit) | Durasi Evaluasi (detik)`
+**Tab Log** (catatan mentah, kolom `Waktu` = jam perangkat saat kejadian, `Waktu Server` = jam server Google sebagai pembanding): Login, Login GAGAL, Mulai Sesi Belajar (jenis perangkat), Akses Halaman, Durasi Halaman (detik aktif per halaman), Buka Bagian (tab Materi), Mulai/Jawab/Selesai/Durasi Latihan dan Evaluasi (skor + capaian C1-C6), Simulasi (Level & Contoh Rangkaian dibuka, ON/OFF saklar, percobaan selesai, MCB trip, minta petunjuk), Buka/Unduh Jobsheet, Praktikum (centang pemeriksaan, pengujian, selesai, lanjut Evaluasi), Buka Asisten AI, Tanya AI, Logout.
+**Tab Chat**: semua pertanyaan siswa dan jawaban AI beserta waktunya. Siswa dapat membuka riwayatnya sendiri lewat tombol Tanya AI > Riwayat.
+Bila internet siswa putus, aktivitas disimpan sementara di perangkat dan dikirim otomatis saat online lagi (waktu kejadian tetap yang asli).
 Backup ke Excel: **File > Download > Microsoft Excel (.xlsx)**.
 
 ## Batas keamanan (jujur)

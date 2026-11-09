@@ -38,6 +38,7 @@ const SimEngine = (() => {
 
   // ----- jaring (union-find) -----
   function makeNets(level, wires, closed) {
+    // closed = state saklar per id komponen: { mcb:true, sk:false, ... }
     const parent = {};
     const find = (x) => { if (parent[x] === undefined) parent[x] = x; while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
     const union = (a, b) => { const ra = find(a), rb = find(b); if (ra !== rb) parent[ra] = rb; };
@@ -46,14 +47,20 @@ const SimEngine = (() => {
       if (c.internal) for (let i = 1; i < c.terms.length; i++) union(T(c.id, c.terms[0].id), T(c.id, c.terms[i].id));
     });
     wires.forEach(w => union(w.a, w.b));
-    if (closed.mcb) union('mcb.in', 'mcb.out');
-    if (closed.sk) union('sk.in', 'sk.out');
+    // setiap komponen 'toggle' menyambung sesuai state-nya.
+    // saklar2 (saklar tukar / SPDT): com selalu tersambung ke a1 (true) atau a2 (false)
+    level.comps.forEach(c => {
+      if (!c.toggle) return;
+      const on = !!closed[c.id];
+      if (c.type === 'saklar2') union(T(c.id, 'com'), T(c.id, on ? 'a1' : 'a2'));
+      else if (on) union(T(c.id, 'in'), T(c.id, 'out'));
+    });
     return { find, same: (a, b) => find(a) === find(b) };
   }
 
   // ----- evaluasi aliran arus pada keadaan saklar tertentu -----
   function evaluate(level, wires, state) {
-    const nets = makeNets(level, wires, { mcb: state.mcb, sk: state.sk });
+    const nets = makeNets(level, wires, state);
     const nL = nets.find('src.L'), nN = nets.find('src.N');
     const lampEdges = level.lamps.map(id => ({ id, na: nets.find(T(id, 'a')), nb: nets.find(T(id, 'b')) }));
     const status = {}; level.lamps.forEach(id => status[id] = 0);   // 0 padam, 1 redup, 2 terang
@@ -79,9 +86,17 @@ const SimEngine = (() => {
   // ----- analisis lengkap untuk keadaan saat ini -----
   function analyze(level, wires, state) {
     const now = evaluate(level, wires, state);
-    const on = evaluate(level, wires, { mcb: true, sk: true });
-    const off = evaluate(level, wires, { mcb: true, sk: false });
-    const bypass = evaluate(level, wires, { mcb: false, sk: true }).short;   // L bertemu N tanpa lewat MCB
+    const toggles = level.comps.filter(c => c.toggle).map(c => c.id);
+    const others = toggles.filter(id => id !== 'mcb');
+    const mk = (mcb, v) => { const s = { mcb }; others.forEach(id => s[id] = v); return s; };
+    const on = evaluate(level, wires, mk(true, true));
+    const off = evaluate(level, wires, mk(true, false));
+    // bypass: L bertemu N tanpa lewat MCB, pada kombinasi posisi saklar mana pun
+    let bypass = false;
+    for (let m = 0; m < (1 << others.length); m++) {
+      const s = { mcb: false }; others.forEach((id, i) => s[id] = !!(m & (1 << i)));
+      if (evaluate(level, wires, s).short) { bypass = true; break; }
+    }
     const allFull = (r) => level.lamps.every(id => r.status[id] === 2);
     const circuitOk = allFull(on) && !on.short;
     const switchControls = !off.hot && !off.short && level.lamps.every(id => off.status[id] === 0);
@@ -90,7 +105,7 @@ const SimEngine = (() => {
 
   // ----- checklist misi (berdasarkan sambungan kabel saja) -----
   function missions(level, wires) {
-    const n = makeNets(level, wires, { mcb: false, sk: false });
+    const n = makeNets(level, wires, {});
     const L = 'src.L', Nn = 'src.N';
     const mcbLoad = n.same('mcb.in', L) ? 'mcb.out' : (n.same('mcb.out', L) ? 'mcb.in' : null);
     const c1 = n.same('mcb.in', L) || n.same('mcb.out', L);
